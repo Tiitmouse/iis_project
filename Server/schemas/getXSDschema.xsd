@@ -1,0 +1,34 @@
+ <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="root">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="status"/>
+                <xs:element type="xs:string" name="request_id"/>
+                <xs:element maxOccurs="unbounded" name="data">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:string" name="domain"/>
+                            <xs:element type="xs:string" name="query"/>
+                            <xs:element name="emails">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:string" name="value"/>
+                                        <sources></sources>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="phone_numbers">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:string" name="value"/>
+                                        <sources></sources>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
