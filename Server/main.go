@@ -21,7 +21,7 @@ func handleXMLUpload(c *gin.Context) {
 		return
 	}
 
-	filename := filepath.Base(file.Filename)
+	filename := filepath.Join("upload", filepath.Base(file.Filename))
 	if err := c.SaveUploadedFile(file, filename); err != nil {
 		c.String(http.StatusBadRequest, "upload file err: %s", err.Error())
 		return
