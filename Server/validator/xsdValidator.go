@@ -3,8 +3,8 @@ package validator
 import (
 	"fmt"
 
-	"github.com/lestrrat-go/libxml2"
-	"github.com/lestrrat-go/libxml2/xsd"
+	"github.com/killi1812/libxml2"
+	"github.com/killi1812/libxml2/xsd"
 )
 
 func ValidateWithXSD(xmlData []byte, xsdFilePath string) error {
