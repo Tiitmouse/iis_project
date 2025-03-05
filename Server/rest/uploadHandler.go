@@ -13,6 +13,7 @@ import (
 func HandleXMLUpload(c *gin.Context) {
 	// TODO maybe extract to global
 	xsdFilePath := "./schemas/exampleXSD.xsd"
+	rngFilePath := "./schemas/exampleRNG.rng"
 
 	fileHeader, err := c.FormFile("file")
 	if err != nil {
@@ -43,7 +44,7 @@ func HandleXMLUpload(c *gin.Context) {
 			return
 		}
 	case "rng":
-		if err := validator.ValidateWithXSD(data, xsdFilePath); err != nil {
+		if err := validator.ValidateWithRNG(data, rngFilePath); err != nil {
 			// TODO match errors to return ok, bad xml
 			c.String(http.StatusInternalServerError, "XML validation failed: %s", err.Error())
 			return
