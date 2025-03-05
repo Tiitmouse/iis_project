@@ -8,6 +8,7 @@ import (
 
 func main() {
 	r := gin.Default()
-	r.POST("/upload", rest.HandleXMLUpload)
+	r.POST("/upload/xsd", rest.HandleXMLUpload)
+	r.POST("/upload/rng", rest.HandleXMLUpload)
 	r.Run(":8088")
 }

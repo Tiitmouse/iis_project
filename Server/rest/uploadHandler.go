@@ -5,6 +5,7 @@ import (
 	"iis_server/validator"
 	"net/http"
 	"path/filepath"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,10 +33,23 @@ func HandleXMLUpload(c *gin.Context) {
 		c.String(http.StatusInternalServerError, "cannot read the file: %s", err.Error())
 	}
 
-	if err := validator.ValidateWithXSD(data, xsdFilePath); err != nil {
-		// TODO match errors to return ok, bad xml
-		c.String(http.StatusInternalServerError, "XML validation failed: %s", err.Error())
-		return
+	parts := strings.Split(c.Request.URL.Path, "/")
+
+	switch parts[len(parts)-1] {
+	case "xsd":
+		if err := validator.ValidateWithXSD(data, xsdFilePath); err != nil {
+			// TODO match errors to return ok, bad xml
+			c.String(http.StatusInternalServerError, "XML validation failed: %s", err.Error())
+			return
+		}
+	case "rng":
+		if err := validator.ValidateWithXSD(data, xsdFilePath); err != nil {
+			// TODO match errors to return ok, bad xml
+			c.String(http.StatusInternalServerError, "XML validation failed: %s", err.Error())
+			return
+		}
+	default:
+		c.String(http.StatusInternalServerError, "Invalid validation: %s, %s", parts[len(parts)-1], err.Error())
 	}
 
 	filename := filepath.Join("upload", filepath.Base(fileHeader.Filename))
