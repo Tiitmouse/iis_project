@@ -1,34 +1,52 @@
- <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+
     <xs:element name="root">
         <xs:complexType>
             <xs:sequence>
-                <xs:element type="xs:string" name="status"/>
-                <xs:element type="xs:string" name="request_id"/>
-                <xs:element maxOccurs="unbounded" name="data">
+                <xs:element name="status" type="xs:string"/>
+                <xs:element name="request_id" type="xs:string"/>
+                <xs:element name="data">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element type="xs:string" name="domain"/>
-                            <xs:element type="xs:string" name="query"/>
-                            <xs:element name="emails">
+                            <xs:element name="domain" type="xs:string"/>
+                            <xs:element name="query" type="xs:string"/>
+                            
+                            <xs:element name="emails" maxOccurs="unbounded">
                                 <xs:complexType>
                                     <xs:sequence>
-                                        <xs:element type="xs:string" name="value"/>
-                                        <sources></sources>
+                                        <xs:element name="value" type="xs:string"/>
+                                        <xs:element name="sources" type="xs:anyURI" maxOccurs="unbounded"/>
                                     </xs:sequence>
                                 </xs:complexType>
                             </xs:element>
-                            <xs:element name="phone_numbers">
+                            
+                            <xs:element name="phone_numbers" maxOccurs="unbounded">
                                 <xs:complexType>
                                     <xs:sequence>
-                                        <xs:element type="xs:string" name="value"/>
-                                        <sources></sources>
+                                        <xs:element name="value" type="xs:string"/>
+                                        <xs:element name="sources" type="xs:anyURI" maxOccurs="unbounded"/>
                                     </xs:sequence>
                                 </xs:complexType>
                             </xs:element>
+                            
+                            <xs:element name="facebook" type="xs:anyURI" minOccurs="0"/>
+                            <xs:element name="instagram" type="xs:anyURI" minOccurs="0"/>
+                            <xs:element name="tiktok" type="xs:anyURI" minOccurs="0"/>
+                            <xs:element name="snapchat" type="xs:anyURI" minOccurs="0"/>
+                            <xs:element name="twitter" type="xs:anyURI" minOccurs="0"/>
+                            <xs:element name="linkedin" type="xs:anyURI" minOccurs="0"/>
+                            <xs:element name="github" type="xs:anyURI" minOccurs="0"/>
+                            <xs:element name="youtube" type="xs:anyURI" minOccurs="0"/>
+                            <xs:element name="pinterest" type="xs:anyURI" minOccurs="0"/>
+                            
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
+                
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+
 </xs:schema>

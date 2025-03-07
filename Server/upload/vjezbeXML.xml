@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ocjene>
+    <ispit>
+        <predmet sifra="PROG">Programiranje</predmet>
+        <student JMBAG="123456789">
+            <ime>Fran</ime>
+            <prezime>Cvok</prezime>
+        </student>
+        <ocjena>5</ocjena>
+    </ispit>
+    <ispit>
+        <predmet sifra="OS">Operacijski sustavi</predmet>
+        <student JMBAG="987654321">
+            <ime>Lorena</ime>
+            <prezime>Kovacic</prezime>
+        </student>
+        <ocjena>4</ocjena>
+    </ispit>
+    <ispit>
+        <predmet sifra="DB">Baze podataka</predmet>
+        <student JMBAG="987654321">
+            <ime>Matija</ime>
+            <prezime>Lukanic</prezime>
+        </student>
+        <ocjena>3</ocjena>
+    </ispit>
+</ocjene>

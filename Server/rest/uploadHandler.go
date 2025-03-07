@@ -12,8 +12,8 @@ import (
 
 func HandleXMLUpload(c *gin.Context) {
 	// TODO maybe extract to global
-	xsdFilePath := "./schemas/exampleXSD.xsd"
-	rngFilePath := "./schemas/exampleRNG.rng"
+	xsdFilePath := "./schemas/getXSDschema.xsd"
+	rngFilePath := "./schemas/getRNGschema.rng"
 
 	fileHeader, err := c.FormFile("file")
 	if err != nil {

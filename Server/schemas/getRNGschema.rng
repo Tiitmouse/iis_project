@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0">
+
+    <start>
+        <element name="root">
+            <element name="status">
+                <text/>
+            </element>
+            <element name="request_id">
+                <text/>
+            </element>
+            <element name="data">
+                <element name="domain"><text/></element>
+                <element name="query"><text/></element>
+
+                <zeroOrMore>
+                    <element name="emails">
+                        <element name="value"><text/></element>
+                        <oneOrMore>
+                            <element name="sources"><text/></element>
+                        </oneOrMore>
+                    </element>
+                </zeroOrMore>
+
+                <zeroOrMore>
+                    <element name="phone_numbers">
+                        <element name="value"><text/></element>
+                        <oneOrMore>
+                            <element name="sources"><text/></element>
+                        </oneOrMore>
+                    </element>
+                </zeroOrMore>
+
+                <optional><element name="facebook"><text/></element></optional>
+                <optional><element name="instagram"><text/></element></optional>
+                <optional><element name="tiktok"><text/></element></optional>
+                <optional><element name="snapchat"><text/></element></optional>
+                <optional><element name="twitter"><text/></element></optional>
+                <optional><element name="linkedin"><text/></element></optional>
+                <optional><element name="github"><text/></element></optional>
+                <optional><element name="youtube"><text/></element></optional>
+                <optional><element name="pinterest"><text/></element></optional>
+            </element>
+        </element>
+    </start>
+
+</grammar>

@@ -7,6 +7,6 @@ build/
 .vscode/
 .env
 
-*.xml
-*.rng
-*.xsd
+# *.xml
+# *.rng
+# *.xsd
