@@ -14,9 +14,9 @@
       <v-tab v-for="item in items" :key="item" :text="item" :value="item"></v-tab>
     </v-tabs>
 
-    <v-tabs-window v-model="tab" class="tabWindow">
+    <v-tabs-window v-model="tab">
       <v-tabs-window-item v-for="item in items" :key="item" :value="item">
-        <v-card flat>
+        <v-card flat class="whitebg">
           <v-card-text class="cardText">{{ text }}</v-card-text>
         </v-card>
       </v-tabs-window-item>
@@ -43,12 +43,11 @@ const text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do ei
 .topCard {
   background-color: #5373b3 !important;
 }
-
-.tabWindow {
-  background-color: white;
+.whitebg {
+  background-color: white !important;
 }
 .cardText{
-  color: white;
+  color: black;
 }
 .text-basil {
   color: white !important;
