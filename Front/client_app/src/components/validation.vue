@@ -15,6 +15,8 @@
       density="compact"
       title="Drag and drop .xml file"
       variant="compact"
+      accept=".xml"
+      @change="handleFileUpload"
     ></v-file-upload>
   </div>
 </template>
@@ -24,6 +26,15 @@ import { ref } from 'vue'
 import { VFileUpload } from "vuetify/labs/VFileUpload"
 
 const validationType = ref("xsd")
+const uploadedFilePath = ref<string | undefined>()
+
+function handleFileUpload(event: Event) {
+  const input = event.target as HTMLInputElement
+  if (input.files && input.files[0]) {
+    uploadedFilePath.value = input.files[0].name
+  }
+  console.log(uploadedFilePath)
+}
 </script>
 
 <style>
