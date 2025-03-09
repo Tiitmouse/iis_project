@@ -27,6 +27,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import Validation from '../components/validation.vue'
+import ApiConJwt from '../components/apiConJwt.vue'
 import Weather from '../components/weather.vue'
 import Soap from '../components/soap.vue'
 import JAXB from '../components/jaxb.vue'
@@ -51,7 +52,8 @@ const currentComponent = computed(() => {
       return JAXB
     case 'Weather':
       return Weather
-    // Add cases for other components as needed
+    case 'API con JWT':
+      return ApiConJwt
     default:
       return { template: '<div> default value </div>', props: ['text'] }
   }
