@@ -27,6 +27,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import Validation from '../components/validation.vue'
+import Soap from '../components/soap.vue'
 
 const tab = ref('Menus')
 
@@ -42,6 +43,8 @@ const currentComponent = computed(() => {
   switch (tab.value) {
     case 'Validation':
       return Validation
+    case 'Soap':
+      return Soap
     // Add cases for other components as needed
     default:
       return { template: '<div> default value</div>', props: ['text'] }
