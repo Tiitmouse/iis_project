@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/killi1812/libxml2"
@@ -8,6 +9,8 @@ import (
 	"github.com/killi1812/libxml2/types"
 	"github.com/killi1812/libxml2/xsd"
 )
+
+var ErrBadSyntax = errors.New("failed to parse XML, syntax error")
 
 func ValidateWithRNG(xmlData []byte, rngFilePath string) error {
 	schema, err := relaxng.ParseFromFile(rngFilePath)
@@ -32,13 +35,16 @@ func ValidateWithXSD(xmlData []byte, xsdFilePath string) error {
 func validate(xmlData []byte, schema types.Schema) error {
 	doc, err := libxml2.Parse(xmlData)
 	if err != nil {
-		return fmt.Errorf("failed to parse XML: %w", err)
+		return errors.Join(ErrBadSyntax, err)
 	}
 	defer doc.Free()
 
 	if err := schema.Validate(doc); err != nil {
-		// TODO unwrap validators
-		return fmt.Errorf("XML validation failed: %w", err)
+		var validationError types.SchemaValidationError
+		if errors.As(err, &validationError) {
+			return fmt.Errorf("schema not valid: %v", validationError.Errors)
+		}
+		return fmt.Errorf("schema validation failed: %w", err)
 	}
 
 	return nil

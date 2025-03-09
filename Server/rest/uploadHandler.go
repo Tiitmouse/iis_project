@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"errors"
 	"fmt"
 	"iis_server/validator"
 	"net/http"
@@ -8,10 +9,10 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/killi1812/libxml2/types"
 )
 
 func HandleXMLUpload(c *gin.Context) {
-	// TODO maybe extract to global
 	xsdFilePath := "./schemas/getXSDschema.xsd"
 	rngFilePath := "./schemas/getRNGschema.rng"
 
@@ -38,19 +39,25 @@ func HandleXMLUpload(c *gin.Context) {
 
 	switch parts[len(parts)-1] {
 	case "xsd":
-		if err := validator.ValidateWithXSD(data, xsdFilePath); err != nil {
-			// TODO match errors to return ok, bad xml
-			c.String(http.StatusInternalServerError, "XML validation failed: %s", err.Error())
-			return
-		}
+		err = validator.ValidateWithXSD(data, xsdFilePath)
+
 	case "rng":
-		if err := validator.ValidateWithRNG(data, rngFilePath); err != nil {
-			// TODO match errors to return ok, bad xml
-			c.String(http.StatusInternalServerError, "XML validation failed: %s", err.Error())
-			return
-		}
+		err = validator.ValidateWithRNG(data, rngFilePath)
+
 	default:
 		c.String(http.StatusInternalServerError, "Invalid validation: %s, %s", parts[len(parts)-1], err.Error())
+	}
+
+	if err != nil {
+		var validationError types.SchemaValidationError
+		if errors.As(err, &validationError) {
+			c.String(http.StatusOK, "XML not valid: %v", validationError.Errors)
+		} else if errors.Is(err, validator.ErrBadSyntax) {
+			c.String(http.StatusOK, "XML not valid: %v", err)
+		} else {
+			c.String(http.StatusInternalServerError, "XML validation failed: %s", err.Error())
+		}
+		return
 	}
 
 	filename := filepath.Join("upload", filepath.Base(fileHeader.Filename))
