@@ -1,7 +1,5 @@
-<!-- eslint-disable vue/singleline-html-element-content-newline -->
-<!-- eslint-disable vue/html-self-closing -->
 <!-- eslint-disable vue/max-attributes-per-line -->
-
+<!-- eslint-disable vue/html-self-closing -->
 <template>
   <v-card class="topCard">
     <v-card-title class="text-center justify-center py-6">
@@ -17,7 +15,9 @@
     <v-tabs-window v-model="tab">
       <v-tabs-window-item v-for="item in items" :key="item" :value="item">
         <v-card flat class="whitebg">
-          <v-card-text class="cardText">{{ text }}</v-card-text>
+          <v-card-text class="cardText">
+            <component :is="currentComponent"></component>
+          </v-card-text>
         </v-card>
       </v-tabs-window-item>
     </v-tabs-window>
@@ -25,7 +25,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import Validation from '../components/validation.vue'
 
 const tab = ref('Menus')
 
@@ -36,7 +37,18 @@ const items = [
   'Weather',
   'API con JWT'
 ]
-const text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+
+const currentComponent = computed(() => {
+  switch (tab.value) {
+    case 'Validation':
+      return Validation
+    // Add cases for other components as needed
+    default:
+      return { template: '<div> default value</div>', props: ['text'] }
+  }
+})
+
+
 </script>
 
 <style>
