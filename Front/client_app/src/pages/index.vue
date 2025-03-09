@@ -75,4 +75,7 @@ const currentComponent = computed(() => {
 .text-basil {
   color: white !important;
 }
+.v-main{
+  background: white;
+}
 </style>
