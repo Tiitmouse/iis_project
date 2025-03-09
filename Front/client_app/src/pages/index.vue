@@ -28,6 +28,7 @@
 import { ref, computed } from 'vue'
 import Validation from '../components/validation.vue'
 import Soap from '../components/soap.vue'
+import JAXB from '../components/jaxb.vue'
 
 const tab = ref('Menus')
 
@@ -45,9 +46,11 @@ const currentComponent = computed(() => {
       return Validation
     case 'Soap':
       return Soap
+    case 'JAXB':
+      return JAXB
     // Add cases for other components as needed
     default:
-      return { template: '<div> default value</div>', props: ['text'] }
+      return { template: '<div> default value </div>', props: ['text'] }
   }
 })
 
