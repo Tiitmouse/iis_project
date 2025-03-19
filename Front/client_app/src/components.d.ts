@@ -14,6 +14,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Soap: typeof import('./components/soap.vue')['default']
+    Startpage: typeof import('./components/startpage.vue')['default']
     Validation: typeof import('./components/validation.vue')['default']
     Weather: typeof import('./components/weather.vue')['default']
   }
