@@ -1,5 +1,3 @@
-<!-- eslint-disable vue/max-attributes-per-line -->
-<!-- eslint-disable vue/html-self-closing -->
 
 <template>
   <v-app>
