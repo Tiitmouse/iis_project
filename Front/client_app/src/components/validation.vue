@@ -23,6 +23,11 @@
       @change="handleFileUpload"
     ></v-file-upload>
   </div>
+  <div>
+    <v-btn class="btnValidate" rounded="xs" block>
+      Validate
+    </v-btn>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -56,5 +61,12 @@ async function testfunc(){
 <style>
 .v-sheet {
   background: #5373b3;
+}
+.btnValidate{
+  background-color: white;
+  color: #5373b3;
+  font-weight: bold;
+  margin-top: 20px;
+  box-shadow:  0 0 15px 2px #5373b3;
 }
 </style>

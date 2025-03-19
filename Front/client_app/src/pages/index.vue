@@ -80,21 +80,14 @@ const setTab = (selectedTab: string) => {
 }
 </script>
 
-
 <style>
-.topCard {
-  background-color: #5373b3 !important;
-}
 .whitebg {
   background-color: white !important;
 }
-.cardText{
+.cardText {
   color: black;
 }
-.text-basil {
-  color: white !important;
-}
-.v-main{
+.v-main {
   background: white;
 }
 </style>
