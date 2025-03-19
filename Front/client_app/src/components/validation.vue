@@ -1,13 +1,17 @@
+<!-- eslint-disable vue/singleline-html-element-content-newline -->
 <!-- eslint-disable vue/max-attributes-per-line -->
 <!-- eslint-disable vue/html-self-closing -->
 <!-- eslint-disable vue/html-indent -->
 <template>
   <div>
+    <button @click="testfunc">test</button>
+  </div>
+  <div>
     <H3>Validate with:</H3>
-        <v-radio-group v-model="validationType" inline>
-          <v-radio label="XSD" value="xsd"></v-radio>
-          <v-radio label="RelaxNG" value="rng"></v-radio>
-        </v-radio-group>
+    <v-radio-group v-model="validationType" inline>
+      <v-radio label="XSD" value="xsd"></v-radio>
+      <v-radio label="RelaxNG" value="rng"></v-radio>
+    </v-radio-group>
   </div>
   <div>
     <v-file-upload
@@ -22,23 +26,35 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { VFileUpload } from "vuetify/labs/VFileUpload"
+import { ref } from "vue";
+import { VFileUpload } from "vuetify/labs/VFileUpload";
+import { Test } from "../api/validationAPI"
 
-const validationType = ref("xsd")
-const uploadedFilePath = ref<string | undefined>()
-
+const validationType = ref("xsd");
+const uploadedFilePath = ref<string | undefined>();
+    
 function handleFileUpload(event: Event) {
-  const input = event.target as HTMLInputElement
+  const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
-    uploadedFilePath.value = input.files[0].name
+    uploadedFilePath.value = input.files[0].name;
   }
-  console.log(uploadedFilePath)
+  console.log(uploadedFilePath);
 }
+
+async function testfunc(){
+    try {
+        await Test()
+    } catch (error) {
+        console.log(error);
+    }
+    console.log("success");
+    
+}
+
 </script>
 
 <style>
 .v-sheet {
-    background: #5373B3;
+  background: #5373b3;
 }
 </style>
