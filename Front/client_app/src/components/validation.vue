@@ -1,7 +1,6 @@
-
 <template>
   <div>
-    <H3>Validate with:</H3>
+    <h3>Validate with:</h3>
     <v-radio-group v-model="validationType" inline>
       <v-radio label="XSD" value="xsd"></v-radio>
       <v-radio label="RelaxNG" value="rng"></v-radio>
@@ -27,44 +26,56 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import { VFileUpload } from "vuetify/labs/VFileUpload";
+import { xsdValidate, rngValidate } from "@/api/validationAPI";
 
 const validationType = ref("xsd");
-const uploadedFilePath = ref<string | undefined>();
-    
+const uploadedFile = ref<File | null>(null);
+
 function handleFileUpload(event: Event) {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
-    uploadedFilePath.value = input.files[0].name;
+    uploadedFile.value = input.files[0];
+  } else {
+    uploadedFile.value = null;
   }
-  console.log(uploadedFilePath);
+  console.log(uploadedFile.value);
 }
 
 async function validateFile() {
-  if (!uploadedFilePath.value) {
+  if (!uploadedFile.value) {
     alert("Please upload a file.");
     return;
   }
 
-  if (validationType.value === "xsd") {
-    // TODO: xsd
-    alert("XSD validation");
-  } else if (validationType.value === "rng") {
-    // TODO: rng
-    alert("RelaxNG validation");
+  try {
+    let response;
+    if (validationType.value === "xsd") {
+      response = await xsdValidate(uploadedFile.value);
+    } else if (validationType.value === "rng") {
+      response = await rngValidate(uploadedFile.value);
+    }
+
+    if (response && response.data) {
+      alert(response.data);
+    } else {
+      alert("Validation failed.");
+    }
+  } catch (error) {
+    console.error("Error during validation:", error);
+    alert(`An error occurred during validation: ${error}`);
   }
 }
-
 </script>
 
 <style>
 .v-sheet {
   background: #5373b3;
 }
-.btnValidate{
+.btnValidate {
   background-color: white;
   color: #5373b3;
   font-weight: bold;
   margin-top: 20px;
-  box-shadow:  0 0 15px 2px #5373b3;
+  box-shadow: 0 0 15px 2px #5373b3;
 }
 </style>
