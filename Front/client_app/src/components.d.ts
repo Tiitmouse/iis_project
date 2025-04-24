@@ -13,6 +13,7 @@ declare module 'vue' {
     Jaxb: typeof import('./components/jaxb.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SnackbarProvider: typeof import('./components/SnackbarProvider.vue')['default']
     Soap: typeof import('./components/soap.vue')['default']
     Startpage: typeof import('./components/startpage.vue')['default']
     Validation: typeof import('./components/validation.vue')['default']

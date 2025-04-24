@@ -52,9 +52,9 @@ func HandleXMLUpload(c *gin.Context) {
 	if err != nil {
 		var validationError types.SchemaValidationError
 		if errors.As(err, &validationError) {
-			c.String(http.StatusOK, "XML not valid: %v", validationError.Errors)
+			c.String(http.StatusInternalServerError, "XML not valid: %v", validationError.Errors)
 		} else if errors.Is(err, validator.ErrBadSyntax) {
-			c.String(http.StatusOK, "XML not valid: %v", err)
+			c.String(http.StatusInternalServerError, "XML not valid: %v", err)
 		} else {
 			c.String(http.StatusInternalServerError, "XML validation failed: %s", err.Error())
 		}

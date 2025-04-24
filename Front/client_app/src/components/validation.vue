@@ -27,9 +27,13 @@
 import { ref } from "vue";
 import { VFileUpload } from "vuetify/labs/VFileUpload";
 import { xsdValidate, rngValidate } from "@/api/validationAPI";
+import { useSnackbar } from '@/components/SnackbarProvider.vue';
+
 
 const validationType = ref("xsd");
 const uploadedFile = ref<File | null>(null);
+const snackbar = useSnackbar()
+
 
 function handleFileUpload(event: Event) {
   const input = event.target as HTMLInputElement;
@@ -43,7 +47,7 @@ function handleFileUpload(event: Event) {
 
 async function validateFile() {
   if (!uploadedFile.value) {
-    alert("Please upload a file.");
+    snackbar.Info("Please upload a file.")
     return;
   }
 
@@ -56,14 +60,46 @@ async function validateFile() {
     }
 
     if (response && response.data) {
-      alert(response.data);
+      snackbar.Success("validation success")
     } else {
-      alert("Validation failed.");
+      snackbar.Error("validation failed")
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error during validation:", error);
-    alert(`An error occurred during validation: ${error}`);
+
+    if (error.response && error.response.data) {
+      const errorData = error.response.data;
+
+      if (typeof errorData === 'string' && errorData.includes('<')) {
+        const errorDetails = parseErrorMessage(errorData);
+        snackbar.Error(`Validation error: ${errorDetails}`);
+      } else if (typeof errorData === 'object') {
+        const errorMessage = errorData.message || JSON.stringify(errorData);
+        snackbar.Error(`Validation error: ${errorMessage}`);
+      }
+      else {
+        snackbar.Error(`An error occurred during validation: ${errorData}`);
+      }
+    } else {
+      snackbar.Error(`An error occurred during validation: ${error}`);
+    }
   }
+}
+
+function parseErrorMessage(errorMessage: string) {
+  const lineRegex = /Line: (\d+)/i;
+  const tagRegex = /Tag: ([\w:]+)/i;
+  const messageRegex = /Message: (.+)/i;
+
+  const lineMatch = errorMessage.match(lineRegex);
+  const tagMatch = errorMessage.match(tagRegex);
+  const messageMatch = errorMessage.match(messageRegex);
+
+  const line = lineMatch ? lineMatch[1] : 'N/A';
+  const tag = tagMatch ? tagMatch[1] : 'N/A';
+  const message = messageMatch ? messageMatch[1] : 'Unknown error';
+
+  return `Line: ${line}, Tag: ${tag}, Message: ${message}`;
 }
 </script>
 

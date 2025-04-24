@@ -1,9 +1,11 @@
 <template>
+  <SnackbarProvider>
   <v-main>
     <router-view />
   </v-main>
+<AppFooter />
+</SnackbarProvider>
 
-  <AppFooter />
 </template>
 
 <script lang="ts" setup>
