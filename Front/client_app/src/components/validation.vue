@@ -114,4 +114,7 @@ function parseErrorMessage(errorMessage: string) {
   margin-top: 20px;
   box-shadow: 0 0 15px 2px #5373b3;
 }
+h3{
+  margin-bottom: 20px
+}
 </style>
