@@ -1,7 +1,7 @@
 package main
 
 import (
-	"iis_server/rest"
+	"iis_server/handlers"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -15,7 +15,10 @@ func main() {
 	config.AllowMethods = []string{"POST", "GET", "OPTIONS"}
 	r.Use(cors.New(config))
 
-	r.POST("/upload/xsd", rest.HandleXMLUpload)
-	r.POST("/upload/rng", rest.HandleXMLUpload)
+	r.POST("/upload/xsd", handlers.HandleXMLUpload)
+	r.POST("/upload/rng", handlers.HandleXMLUpload)
+
+	r.GET("/weather", handlers.GetWeatherByCity)
+
 	r.Run(":8088")
 }
