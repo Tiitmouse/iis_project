@@ -13,7 +13,15 @@ func main() {
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:3000"}
 	config.AllowMethods = []string{"POST", "GET", "OPTIONS"}
+	config.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
+	config.AllowCredentials = true
 	r.Use(cors.New(config))
+
+	api := r.Group("/api")
+	{
+		api.POST("/login", handlers.LoginHandler)
+		api.POST("/refresh", handlers.RefreshTokenHandler)
+	}
 
 	r.POST("/upload/xsd", handlers.HandleXMLUpload)
 	r.POST("/upload/rng", handlers.HandleXMLUpload)
