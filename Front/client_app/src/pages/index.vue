@@ -38,7 +38,7 @@ import { ref, computed, defineAsyncComponent } from 'vue'
 
 const StartPage = defineAsyncComponent(() => import('../components/startpage.vue'))
 const Validation = defineAsyncComponent(() => import('../components/validation.vue'))
-const ApiConJwt = defineAsyncComponent(() => import('../components/apiConJwt.vue'))
+const Crud = defineAsyncComponent(() => import('../components/crud.vue'))
 const Weather = defineAsyncComponent(() => import('../components/weather.vue'))
 const Soap = defineAsyncComponent(() => import('../components/soap.vue'))
 const JAXB = defineAsyncComponent(() => import('../components/jaxb.vue'))
@@ -52,7 +52,7 @@ const items = [
   'Soap',
   'JAXB',
   'Weather',
-  'API con JWT'
+  'CRUD'
 ]
 
 const currentComponent = computed(() => {
@@ -65,8 +65,8 @@ const currentComponent = computed(() => {
       return JAXB
     case 'Weather':
       return Weather
-    case 'API con JWT':
-      return ApiConJwt
+    case 'CRUD':
+      return Crud
     default:
       return StartPage
   }

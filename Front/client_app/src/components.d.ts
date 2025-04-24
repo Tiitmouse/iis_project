@@ -7,8 +7,9 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    ApiConJwt: typeof import('./components/apiConJwt.vue')['default']
+    ApiConJwt: typeof import('./components/crud.vue')['default']
     AppFooter: typeof import('./components/AppFooter.vue')['default']
+    Crud: typeof import('./components/crud.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     Jaxb: typeof import('./components/jaxb.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
