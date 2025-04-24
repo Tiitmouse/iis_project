@@ -36,8 +36,9 @@ func HandleXMLUpload(c *gin.Context) {
 	}
 
 	parts := strings.Split(c.Request.URL.Path, "/")
+	validationType := parts[len(parts)-1]
 
-	switch parts[len(parts)-1] {
+	switch validationType {
 	case "xsd":
 		err = validator.ValidateWithXSD(data, xsdFilePath)
 
