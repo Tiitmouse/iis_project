@@ -1,9 +1,6 @@
 
 <template>
   <div>
-    <button @click="testfunc">test</button>
-  </div>
-  <div>
     <H3>Validate with:</H3>
     <v-radio-group v-model="validationType" inline>
       <v-radio label="XSD" value="xsd"></v-radio>
@@ -21,7 +18,7 @@
     ></v-file-upload>
   </div>
   <div>
-    <v-btn class="btnValidate" rounded="xs" block>
+    <v-btn class="btnValidate" rounded="xs" block @click="validateFile">
       Validate
     </v-btn>
   </div>
@@ -30,7 +27,6 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import { VFileUpload } from "vuetify/labs/VFileUpload";
-import { Test } from "../api/validationAPI"
 
 const validationType = ref("xsd");
 const uploadedFilePath = ref<string | undefined>();
@@ -43,14 +39,19 @@ function handleFileUpload(event: Event) {
   console.log(uploadedFilePath);
 }
 
-async function testfunc(){
-    try {
-        await Test()
-    } catch (error) {
-        console.log(error);
-    }
-    console.log("success");
-    
+async function validateFile() {
+  if (!uploadedFilePath.value) {
+    alert("Please upload a file.");
+    return;
+  }
+
+  if (validationType.value === "xsd") {
+    // TODO: xsd
+    alert("XSD validation");
+  } else if (validationType.value === "rng") {
+    // TODO: rng
+    alert("RelaxNG validation");
+  }
 }
 
 </script>
