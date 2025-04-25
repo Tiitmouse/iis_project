@@ -16,6 +16,8 @@ func main() {
 	contactStore := storage.NewContactStore()
 	handlers.SetContactStore(contactStore)
 
+	storage.SeedStore(contactStore)
+
 	r := gin.Default()
 
 	config := cors.DefaultConfig()
