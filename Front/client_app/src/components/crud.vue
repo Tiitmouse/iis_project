@@ -1,7 +1,7 @@
 <template>
     <div v-if="isLoggedIn">
-      <h1>Welcome!</h1>
-      <p>Here is the content you can access.</p>
+      <h3>Entity manipulation</h3>
+      <p>its pointless i know </p>
     </div>
     <Login v-else @login-success="onLoginSuccess" />
   </template>
