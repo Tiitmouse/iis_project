@@ -1,8 +1,8 @@
 
 <template>
   <v-app>
-    <v-app-bar app color="indigo" dark>
-      <v-toolbar-title>Interoperability of information systems</v-toolbar-title>
+    <v-app-bar app color="indigo" dark id="drag-area" class="top-bar">
+      <v-toolbar-title style="margin-left: 90px; margin-top: -26px;font-size: 1em">INTEROPERABILITY OF INFORMATION SYSTEMS</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn v-for="item in items" :key="item" text="true" @click="setTab(item)">
         {{ item }}
@@ -23,7 +23,7 @@
 
     <v-main>
       <v-container>
-        <v-card class="whitebg">
+         <v-card elevation="0">
           <v-card-text class="cardText">
             <component :is="currentComponent" v-if="tab !== ''"></component>
           </v-card-text>
@@ -79,13 +79,25 @@ const setTab = (selectedTab: string) => {
 </script>
 
 <style>
-.whitebg {
-  background-color: white !important;
+html, body, #app, .v-application, .v-application__wrap, .v-main, .v-card {
+  background-color: transparent !important;
+}
+#drag-area {
+  -webkit-app-region: drag;
+  cursor: move; 
+  --wails-draggable: drag; 
+}
+#drag-area * {
+  -webkit-user-select: none;
+  cursor: default;
 }
 .cardText {
   color: black;
 }
-.v-main {
-  background: white;
+.top-bar{
+  height: 36px;
+}
+.v-app-bar .v-btn {
+  margin-top: -30px;
 }
 </style>
