@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h3>Validate with:</h3>
-    <v-radio-group v-model="validationType" inline>
+    <h2>Validate with:</h2>
+    <v-radio-group v-model="validationType" inline style="color: #f0e9e9;">
       <v-radio label="XSD" value="xsd"></v-radio>
       <v-radio label="RelaxNG" value="rng"></v-radio>
     </v-radio-group>
@@ -28,6 +28,7 @@ import { ref } from "vue";
 import { VFileUpload } from "vuetify/labs/VFileUpload";
 import { xsdValidate, rngValidate } from "@/api/validationAPI";
 import { useSnackbar } from '@/components/SnackbarProvider.vue';
+
 
 
 const validationType = ref("xsd");
@@ -90,16 +91,25 @@ function parseErrorMessage(errorMessage: string) {
 
 <style>
 .v-sheet {
-  background: #5373b3;
+  background: var(--sheets-color);
 }
 .btnValidate {
-  background-color: white;
-  color: #5373b3;
+  background-color: var(--button-color);
+  color: var(--font-color);
   font-weight: bold;
   margin-top: 20px;
-  box-shadow: 0 0 15px 2px #5373b3;
 }
-h3{
-  margin-bottom: 20px
+h2{
+  margin-bottom: 20px;
+  color: var(--font-color);
+}
+.v-list-item-title {
+  color: var(--font-color);
+}
+.v-list-item-subtitle {
+  color: var(--font-color);
+  }
+.mdi-close-circle{
+  color: var(--font-color);
 }
 </style>
