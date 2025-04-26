@@ -24,7 +24,7 @@ import { type InjectionKey, provide, ref } from 'vue';
 const show = ref(false)
 const message = ref('')
 const color = ref('')
-const timeout = ref(2000)
+const timeout = ref(5000)
 
 provide(key, {
     Error(text: string) {

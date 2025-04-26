@@ -58,31 +58,16 @@ async function validateFile() {
     } else if (validationType.value === "rng") {
       response = await rngValidate(uploadedFile.value);
     }
-
-    if (response && response.data) {
+debugger
+    if (!response?.Error) {
       snackbar.Success("validation success")
     } else {
-      snackbar.Error("validation failed")
+      console.log(response.Error)
+      snackbar.Error(`validation failed: ${response.Error}`)
     }
   } catch (error: any) {
     console.error("Error during validation:", error);
 
-    if (error.response && error.response.data) {
-      const errorData = error.response.data;
-
-      if (typeof errorData === 'string' && errorData.includes('<')) {
-        const errorDetails = parseErrorMessage(errorData);
-        snackbar.Error(`Validation error: ${errorDetails}`);
-      } else if (typeof errorData === 'object') {
-        const errorMessage = errorData.message || JSON.stringify(errorData);
-        snackbar.Error(`Validation error: ${errorMessage}`);
-      }
-      else {
-        snackbar.Error(`An error occurred during validation: ${errorData}`);
-      }
-    } else {
-      snackbar.Error(`An error occurred during validation: ${error}`);
-    }
   }
 }
 
