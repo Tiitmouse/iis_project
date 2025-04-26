@@ -11,7 +11,6 @@ const API_BASE_URL = 'http://localhost:8088';
 
 export async function fetchWeather(city: string): Promise<CityWeatherInfo[]> {
     const encodedCity = encodeURIComponent(city.trim());
-    const apiUrl = `/weather?city=${encodedCity}`;
 
     try {
         const response = await axios.get(`/weather?city=${encodedCity}`);
