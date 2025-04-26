@@ -89,6 +89,7 @@ html, body, #app, .v-application, .v-application__wrap, .v-main, .v-card {
 }
 #drag-area * {
   -webkit-user-select: none;
+  user-select: none;
   cursor: default;
 }
 .cardText {
