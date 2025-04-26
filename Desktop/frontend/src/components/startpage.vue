@@ -6,7 +6,6 @@
 </template>
 
 <script lang="ts" setup>
-// Add any necessary logic here
 </script>
 
 <style scoped>
@@ -18,11 +17,11 @@
 
 h1 {
   color: #5373b3;
-  font-size: 2.5em;
+  font-size: 4.5em;
 }
 
 p {
-  color: #555;
-  font-size: 1.2em;
+  color: #f0e9e9;
+  font-size: 2em;
 }
 </style>
