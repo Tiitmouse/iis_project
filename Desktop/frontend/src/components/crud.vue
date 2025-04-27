@@ -27,9 +27,16 @@
       <template v-slot:bottom></template>
     </v-data-table-server>
 
-
     <v-dialog v-model="newContactDialog" max-width="500px">
       <ContactFloat @save="saveNewContact" @cancel="closeNewContactDialog" />
+    </v-dialog>
+
+    <v-dialog v-model="editContactDialog" max-width="500px">
+      <ContactFloat
+        :existingContact="selectedContact || undefined"
+        @save="saveEditedContact"
+        @cancel="closeEditContactDialog"
+      />
     </v-dialog>
   </div>
   <Login v-else @login-success="onLoginSuccess" />
@@ -38,7 +45,13 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import Login from './login.vue';
-import { fetchContacts, deleteContact, createContact, type Contact } from '@/api/contactAPI';
+import {
+  fetchContacts,
+  deleteContact,
+  createContact,
+  updateContact,
+  type Contact,
+} from '@/api/contactAPI';
 import { useSnackbar } from '@/components/SnackbarProvider.vue';
 import ContactFloat from './contactFloat.vue';
 
@@ -55,6 +68,8 @@ const headers = ref([
 ]);
 
 const newContactDialog = ref(false);
+const editContactDialog = ref(false);
+const selectedContact = ref<Contact | null>(null);
 
 const loadItems = async ({ sortBy }: { sortBy: any }) => {
   loading.value = true;
@@ -78,7 +93,6 @@ const loadItems = async ({ sortBy }: { sortBy: any }) => {
         return 0;
       });
     }
-
   } catch (error: any) {
     snackbar.Error(`Failed to load contacts`);
     serverItems.value = [];
@@ -87,8 +101,9 @@ const loadItems = async ({ sortBy }: { sortBy: any }) => {
   }
 };
 
-const editItem = (item: Contact) => {
-  console.log('Edit item:', item);
+const editItem = async (item: Contact) => {
+  selectedContact.value = item;
+  editContactDialog.value = true;
 };
 
 const deleteItem = async (item: Contact) => {
@@ -111,6 +126,11 @@ const closeNewContactDialog = () => {
   newContactDialog.value = false;
 };
 
+const closeEditContactDialog = () => {
+  editContactDialog.value = false;
+  selectedContact.value = null;
+};
+
 const saveNewContact = async (contact: Contact) => {
   console.log('Saving new contact:', contact);
   try {
@@ -124,6 +144,18 @@ const saveNewContact = async (contact: Contact) => {
   }
 };
 
+const saveEditedContact = async (contact: Contact) => {
+  console.log('Saving edited contact:', contact);
+  try {
+    await updateContact(contact.id, contact);
+    snackbar.Success('Contact updated successfully');
+    closeEditContactDialog();
+    await loadItems({ sortBy: currentSortBy.value });
+  } catch (error: any) {
+    console.error('Failed to update contact:', error);
+    snackbar.Error(`Failed to update contact: ${error}`);
+  }
+};
 
 onMounted(() => {
   if (localStorage.getItem('accessToken')) {
@@ -153,7 +185,7 @@ h2 {
 .coloring :deep(.v-data-table-fixed__header > table > thead th),
 .coloring :deep(.v-table__wrapper > table > thead th) {
   border-radius: 5px;
-  background-color: #3F51B5 !important;
+  background-color: #3f51b5 !important;
   color: var(--font-color);
 }
 
