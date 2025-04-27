@@ -70,5 +70,6 @@ function required(v: any) {
 .dashed-border {
     border: 2px dashed #697ea885;
     background-color: #5373b321 !important;
+    border-radius: 5px;
   }
 </style>
