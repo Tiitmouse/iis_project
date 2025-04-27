@@ -49,7 +49,7 @@ async function onSubmit() {
   } catch (error: any) {
     // TODO  remove
     console.error('Login failed:', error.message);
-    snackbar.Error(`Login failed: ${error.message}`);
+    snackbar.Error(`Login failed!`);
   } finally {
     loading.value = false;
   }

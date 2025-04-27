@@ -3,7 +3,7 @@
     <h2>Weather check</h2>
     <v-row>
       <v-col cols="12">
-        <v-text-field v-model="searchCity" label="Search City" prepend-inner-icon="mdi-magnify" variant="outlined"
+        <v-text-field v-model="searchCity" label="Search City" prepend-inner-icon="mdi-magnify" class="dashed-border" variant="plain"
           @input="searchWeather"></v-text-field>
       </v-col>
     </v-row>
@@ -72,7 +72,7 @@ watch(searchCity, () => {
 
 </script>
 
-<style>
+<style lang="css" scoped>
 .transparent-card {
   background-color: transparent !important;
   padding: 16px !important;
@@ -80,13 +80,18 @@ watch(searchCity, () => {
   font-weight: bold;
   box-shadow: 0 0 15px 2px #5373b364;
 }
-
 .v-text-field {
   color: var(--font-color);
 }
-
 h2, p {
   margin-bottom: 20px;
   color: var(--font-color);
 }
+.dashed-border {
+    border: 2px dashed #697ea885;
+    background-color: #5373b321 !important;
+    max-height: 60px;
+    padding-left: 10px;
+    border-radius: 5px;
+  }
 </style>
