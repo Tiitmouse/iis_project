@@ -13,11 +13,13 @@ const isLoggedIn = ref(false);
 
 onMounted(() => {
   if (localStorage.getItem('accessToken')) {
+    console.log('User already logged in');
     isLoggedIn.value = true;
   }
 });
 
 const onLoginSuccess = () => {
+  console.log('Login successful!');
   isLoggedIn.value = true;
 };
 </script>

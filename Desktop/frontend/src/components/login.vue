@@ -24,6 +24,7 @@ na/Documents/algebra/projekti/iis_project/Front/client_app/src/components/login.
 import { ref } from 'vue';
 import { login } from '@/api/loginAPI';
 import { useSnackbar } from '@/components/SnackbarProvider.vue';
+import { errorMessages } from 'vue/compiler-sfc';
 
 const snackbar = useSnackbar();
 
@@ -47,9 +48,8 @@ async function onSubmit() {
     snackbar.Success("Login successful!");
 
   } catch (error: any) {
-    // TODO  remove
     console.error('Login failed:', error.message);
-    snackbar.Error(`Login failed!`);
+    snackbar.Error(`Login failed! ${error.message}`);
   } finally {
     loading.value = false;
   }

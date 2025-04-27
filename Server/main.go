@@ -5,6 +5,8 @@ import (
 	"iis_server/handlers"
 	"iis_server/storage"
 	"iis_server/utils"
+	"strings"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -20,11 +22,18 @@ func main() {
 
 	r := gin.Default()
 
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:3000"}
-	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
-	config.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
-	config.AllowCredentials = true
+	config := cors.Config{
+		AllowOriginFunc: func(origin string) bool {
+			return origin == "http://localhost:3000" || strings.HasPrefix(origin, "wails://")
+
+		},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}
+
 	r.Use(cors.New(config))
 
 	r.GET("/weather", handlers.GetWeatherByCity)
