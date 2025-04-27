@@ -10,9 +10,9 @@
     <v-file-upload
       clearable
       density="compact"
-      title="Drag and drop .xml file"
+      title="Click to upload .xml file"
       variant="compact"
-      accept=".xml"
+      accept=".xml,text/xml,application/xml" 
       @change="handleFileUpload"
     ></v-file-upload>
   </div>
@@ -29,26 +29,34 @@ import { VFileUpload } from "vuetify/labs/VFileUpload";
 import { xsdValidate, rngValidate } from "@/api/validationAPI";
 import { useSnackbar } from '@/components/SnackbarProvider.vue';
 
-
-
 const validationType = ref("xsd");
 const uploadedFile = ref<File | null>(null);
 const snackbar = useSnackbar()
 
-
 function handleFileUpload(event: Event) {
   const input = event.target as HTMLInputElement;
-  if (input.files && input.files[0]) {
-    uploadedFile.value = input.files[0];
-  } else {
+  const files = input.files;
+
+  if (!files || files.length === 0) {
     uploadedFile.value = null;
+    return;
   }
+
+  const file = files[0];
+
+  if (!file.name.endsWith(".xml")) {
+    snackbar.Error("please select an XML file.");
+    input.value = '';
+    return;
+  }
+
+  uploadedFile.value = file;
   console.log(uploadedFile.value);
 }
 
 async function validateFile() {
   if (!uploadedFile.value) {
-    snackbar.Info("Please upload a file.")
+    snackbar.Info("please upload an XML file.")
     return;
   }
 
@@ -59,7 +67,6 @@ async function validateFile() {
     } else if (validationType.value === "rng") {
       response = await rngValidate(uploadedFile.value);
     }
-debugger
     if (!response?.Error) {
       snackbar.Success("validation success")
     } else {
@@ -68,24 +75,7 @@ debugger
     }
   } catch (error: any) {
     console.error("Error during validation:", error);
-
   }
-}
-
-function parseErrorMessage(errorMessage: string) {
-  const lineRegex = /Line: (\d+)/i;
-  const tagRegex = /Tag: ([\w:]+)/i;
-  const messageRegex = /Message: (.+)/i;
-
-  const lineMatch = errorMessage.match(lineRegex);
-  const tagMatch = errorMessage.match(tagRegex);
-  const messageMatch = errorMessage.match(messageRegex);
-
-  const line = lineMatch ? lineMatch[1] : 'N/A';
-  const tag = tagMatch ? tagMatch[1] : 'N/A';
-  const message = messageMatch ? messageMatch[1] : 'Unknown error';
-
-  return `Line: ${line}, Tag: ${tag}, Message: ${message}`;
 }
 </script>
 
@@ -93,23 +83,28 @@ function parseErrorMessage(errorMessage: string) {
 .v-sheet {
   background: var(--sheets-color);
 }
+
 .btnValidate {
   background-color: var(--button-color);
   color: var(--font-color);
   font-weight: bold;
   margin-top: 20px;
 }
-h2{
+
+h2 {
   margin-bottom: 20px;
   color: var(--font-color);
 }
+
 .v-list-item-title {
   color: var(--font-color);
 }
+
 .v-list-item-subtitle {
   color: var(--font-color);
-  }
-.mdi-close-circle{
+}
+
+.mdi-close-circle {
   color: var(--font-color);
 }
 </style>
