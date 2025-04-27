@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AppFooter: typeof import('./components/AppFooter.vue')['default']
+    ContactFloat: typeof import('./components/contactFloat.vue')['default']
     Crud: typeof import('./components/crud.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     Jaxb: typeof import('./components/jaxb.vue')['default']

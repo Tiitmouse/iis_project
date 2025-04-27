@@ -8,8 +8,8 @@
       :loading="loading"
       item-value="id"
       @update:options="loadItems"
-      fixed-header  
-      height="500" 
+      fixed-header
+      height="500"
       class="coloring dashed-border"
     >
       <template v-slot:top>
@@ -17,15 +17,20 @@
           <v-toolbar-title>Contacts</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-btn color="primary" dark class="mb-2">New Contact</v-btn>
+          <v-btn color="primary" dark class="mb-2" @click="openNewContactDialog">New Contact</v-btn>
         </v-toolbar>
       </template>
-       <template v-slot:item.actions="{ item }">
+      <template v-slot:item.actions="{ item }">
         <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
         <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
       </template>
       <template v-slot:bottom></template>
     </v-data-table-server>
+
+
+    <v-dialog v-model="newContactDialog" max-width="500px">
+      <ContactFloat @save="saveNewContact" @cancel="closeNewContactDialog" />
+    </v-dialog>
   </div>
   <Login v-else @login-success="onLoginSuccess" />
 </template>
@@ -33,8 +38,9 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import Login from './login.vue';
-import { fetchContacts, deleteContact, type Contact } from '@/api/contactAPI';
+import { fetchContacts, deleteContact, createContact, type Contact } from '@/api/contactAPI';
 import { useSnackbar } from '@/components/SnackbarProvider.vue';
+import ContactFloat from './contactFloat.vue';
 
 const isLoggedIn = ref(false);
 const snackbar = useSnackbar();
@@ -48,6 +54,8 @@ const headers = ref([
   { title: 'Actions', key: 'actions', sortable: false },
 ]);
 
+const newContactDialog = ref(false);
+
 const loadItems = async ({ sortBy }: { sortBy: any }) => {
   loading.value = true;
   currentSortBy.value = sortBy;
@@ -55,21 +63,21 @@ const loadItems = async ({ sortBy }: { sortBy: any }) => {
     const allContacts = await fetchContacts();
     serverItems.value = allContacts;
 
-     if (sortBy.length > 0) {
-       const sortKey = sortBy[0].key;
-       const sortOrder = sortBy[0].order;
-       serverItems.value.sort((a: any, b: any) => {
-         const valA = a[sortKey];
-         const valB = b[sortKey];
-         if (valA == null && valB == null) return 0;
-         if (valA == null) return sortOrder === 'asc' ? -1 : 1;
-         if (valB == null) return sortOrder === 'asc' ? 1 : -1;
+    if (sortBy.length > 0) {
+      const sortKey = sortBy[0].key;
+      const sortOrder = sortBy[0].order;
+      serverItems.value.sort((a: any, b: any) => {
+        const valA = a[sortKey];
+        const valB = b[sortKey];
+        if (valA == null && valB == null) return 0;
+        if (valA == null) return sortOrder === 'asc' ? -1 : 1;
+        if (valB == null) return sortOrder === 'asc' ? 1 : -1;
 
-         if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
-         if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
-         return 0;
-       });
-     }
+        if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+        if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
 
   } catch (error: any) {
     snackbar.Error(`Failed to load contacts`);
@@ -85,14 +93,35 @@ const editItem = (item: Contact) => {
 
 const deleteItem = async (item: Contact) => {
   console.log('Deleting item:', item);
-    try {
-      await deleteContact(item.id);
-      snackbar.Success('Contact deleted successfully');
-      await loadItems({ sortBy: currentSortBy.value });
-    } catch (error: any) {
-      console.error('Failed to delete contact:', error);
-      snackbar.Error(`Failed to delete contact: ${error}`);
-    }
+  try {
+    await deleteContact(item.id);
+    snackbar.Success('Contact deleted successfully');
+    await loadItems({ sortBy: currentSortBy.value });
+  } catch (error: any) {
+    console.error('Failed to delete contact:', error);
+    snackbar.Error(`Failed to delete contact: ${error}`);
+  }
+};
+
+const openNewContactDialog = () => {
+  newContactDialog.value = true;
+};
+
+const closeNewContactDialog = () => {
+  newContactDialog.value = false;
+};
+
+const saveNewContact = async (contact: Contact) => {
+  console.log('Saving new contact:', contact);
+  try {
+    await createContact(contact);
+    snackbar.Success('Contact created successfully');
+    closeNewContactDialog();
+    await loadItems({ sortBy: currentSortBy.value });
+  } catch (error: any) {
+    console.error('Failed to create contact:', error);
+    snackbar.Error(`Failed to create contact: ${error}`);
+  }
 };
 
 
@@ -115,22 +144,22 @@ h2 {
   margin-bottom: 20px;
   color: var(--font-color);
 }
-.coloring{
+
+.coloring {
   background-color: #5373b348;
   border-radius: 5px;
 }
 
 .coloring :deep(.v-data-table-fixed__header > table > thead th),
-.coloring :deep(.v-table__wrapper > table > thead th)
-{
+.coloring :deep(.v-table__wrapper > table > thead th) {
   border-radius: 5px;
   background-color: #3F51B5 !important;
   color: var(--font-color);
 }
 
 .dashed-border {
-    border: 2px dashed #697ea885;
-    padding-left: 10px;
-    border-radius: 5px;
-  }
+  border: 2px dashed #697ea885;
+  padding-left: 10px;
+  border-radius: 5px;
+}
 </style>

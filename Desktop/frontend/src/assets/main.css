@@ -20,4 +20,8 @@ html, body, #app, .v-application, .v-application__wrap, .v-main, .v-card, .v-for
   .v-app-bar .v-btn {
     margin-top: -30px;
   }
+  .v-overlay__scrim{
+    background-color: rgb(11, 13, 47) !important;
+    opacity: 0.7 !important;
+  }
 

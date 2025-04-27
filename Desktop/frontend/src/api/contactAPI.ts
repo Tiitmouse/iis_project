@@ -16,3 +16,8 @@ export const fetchContacts = async (): Promise<Contact[]> => {
 export const deleteContact = async (id: string): Promise<void> => {
   await axios.delete(`/api/contacts/${id}`);
 };
+
+export const createContact = async (contact: Omit<Contact, 'id'>): Promise<Contact> => {
+  const response = await axios.post('/api/contacts', contact);
+  return response.data;
+};
