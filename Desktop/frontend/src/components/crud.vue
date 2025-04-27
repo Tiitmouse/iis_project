@@ -1,6 +1,6 @@
 <template>
   <div v-if="isLoggedIn">
-    <h2>Entity manipulation</h2>
+    <h2>Contacts</h2>
     <v-data-table-server
       :headers="headers"
       :items="serverItems"
@@ -9,7 +9,8 @@
       item-value="id"
       @update:options="loadItems"
       fixed-header  
-      height="500"  
+      height="500" 
+      class="coloring dashed-border"
     >
       <template v-slot:top>
         <v-toolbar flat color="transparent">
@@ -32,24 +33,24 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import Login from './login.vue';
-import { fetchContacts, type Contact } from '@/api/contactsAPI';
+import { fetchContacts, deleteContact, type Contact } from '@/api/contactAPI';
 import { useSnackbar } from '@/components/SnackbarProvider.vue';
 
 const isLoggedIn = ref(false);
 const snackbar = useSnackbar();
+const serverItems = ref<Contact[]>([]);
+const loading = ref(true);
+const currentSortBy = ref<any[]>([]);
 
 const headers = ref([
   { title: 'Type', key: 'type' },
   { title: 'Value', key: 'value' },
-  { title: 'Name', key: 'name' },
   { title: 'Actions', key: 'actions', sortable: false },
 ]);
-const serverItems = ref<Contact[]>([]);
-const loading = ref(true);
-
 
 const loadItems = async ({ sortBy }: { sortBy: any }) => {
   loading.value = true;
+  currentSortBy.value = sortBy;
   try {
     const allContacts = await fetchContacts();
     serverItems.value = allContacts;
@@ -71,8 +72,7 @@ const loadItems = async ({ sortBy }: { sortBy: any }) => {
      }
 
   } catch (error: any) {
-    console.error('Failed to load contacts:', error);
-    snackbar.Error(`Failed to load contacts: ${error.message || 'Unknown error'}`);
+    snackbar.Error(`Failed to load contacts`);
     serverItems.value = [];
   } finally {
     loading.value = false;
@@ -83,8 +83,16 @@ const editItem = (item: Contact) => {
   console.log('Edit item:', item);
 };
 
-const deleteItem = (item: Contact) => {
-  console.log('Delete item:', item);
+const deleteItem = async (item: Contact) => {
+  console.log('Deleting item:', item);
+    try {
+      await deleteContact(item.id);
+      snackbar.Success('Contact deleted successfully');
+      await loadItems({ sortBy: currentSortBy.value });
+    } catch (error: any) {
+      console.error('Failed to delete contact:', error);
+      snackbar.Error(`Failed to delete contact: ${error}`);
+    }
 };
 
 
@@ -96,6 +104,7 @@ onMounted(() => {
 });
 
 const onLoginSuccess = () => {
+  snackbar.Success(`Login successful!`);
   console.log('Login successful!');
   isLoggedIn.value = true;
 };
@@ -106,4 +115,22 @@ h2 {
   margin-bottom: 20px;
   color: var(--font-color);
 }
+.coloring{
+  background-color: #5373b348;
+  border-radius: 5px;
+}
+
+.coloring :deep(.v-data-table-fixed__header > table > thead th),
+.coloring :deep(.v-table__wrapper > table > thead th)
+{
+  border-radius: 5px;
+  background-color: #3F51B5 !important;
+  color: var(--font-color);
+}
+
+.dashed-border {
+    border: 2px dashed #697ea885;
+    padding-left: 10px;
+    border-radius: 5px;
+  }
 </style>
