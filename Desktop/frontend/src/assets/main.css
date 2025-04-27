@@ -1,4 +1,4 @@
-html, body, #app, .v-application, .v-application__wrap, .v-main, .v-card, .v-form {
+html, body, #app, .v-application, .v-application__wrap, .v-main, .v-card, .v-form, .v-slot {
     background-color: transparent !important;
   }
   #drag-area {
