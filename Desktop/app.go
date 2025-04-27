@@ -46,3 +46,7 @@ func (a *App) Validate(file JsFile, data string, m string) Response {
 	}
 	return Response{Data: rez}
 }
+
+func (a *App) FetchWeather(city string) ([]api.CityWeatherInfo, error) {
+	return api.FetchWeather(city)
+}

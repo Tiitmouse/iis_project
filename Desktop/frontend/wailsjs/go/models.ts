@@ -1,3 +1,24 @@
+export namespace api {
+	
+	export class CityWeatherInfo {
+	    city: string;
+	    temperature: number;
+	    weatherCondition: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new CityWeatherInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.city = source["city"];
+	        this.temperature = source["temperature"];
+	        this.weatherCondition = source["weatherCondition"];
+	    }
+	}
+
+}
+
 export namespace main {
 	
 	export class JsFile {
