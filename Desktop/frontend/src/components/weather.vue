@@ -76,9 +76,9 @@ watch(searchCity, () => {
 .transparent-card {
   background-color: transparent !important;
   padding: 16px !important;
-  color: #5373b3;
+  color: var(--font-color);
   font-weight: bold;
-  box-shadow: 0 0 15px 2px #5373b3;
+  box-shadow: 0 0 15px 2px #5373b364;
 }
 
 .v-text-field {
