@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h3>Weather check</h3>
+    <h2>Weather check</h2>
     <v-row>
       <v-col cols="12">
         <v-text-field v-model="searchCity" label="Search City" prepend-inner-icon="mdi-magnify" variant="outlined"
@@ -81,7 +81,12 @@ watch(searchCity, () => {
   box-shadow: 0 0 15px 2px #5373b3;
 }
 
-h3 {
-  margin-bottom: 20px
+.v-text-field {
+  color: var(--font-color);
+}
+
+h2, p {
+  margin-bottom: 20px;
+  color: var(--font-color);
 }
 </style>
