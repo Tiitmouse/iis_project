@@ -79,26 +79,5 @@ const setTab = (selectedTab: string) => {
 </script>
 
 <style>
-html, body, #app, .v-application, .v-application__wrap, .v-main, .v-card {
-  background-color: transparent !important;
-}
-#drag-area {
-  -webkit-app-region: drag;
-  cursor: move; 
-  --wails-draggable: drag; 
-}
-#drag-area * {
-  -webkit-user-select: none;
-  user-select: none;
-  cursor: default;
-}
-.cardText {
-  color: black;
-}
-.top-bar{
-  height: 36px;
-}
-.v-app-bar .v-btn {
-  margin-top: -30px;
-}
+
 </style>

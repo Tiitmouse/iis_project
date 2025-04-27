@@ -9,6 +9,7 @@ import { registerPlugins } from '@/plugins'
 
 // Style
 import './assets/colors.css';
+import './assets/main.css'
 
 // Components
 import App from './App.vue'
