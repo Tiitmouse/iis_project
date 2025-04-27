@@ -1,17 +1,8 @@
 <template>
   <div v-if="isLoggedIn">
     <h2>Contacts</h2>
-    <v-data-table-server
-      :headers="headers"
-      :items="serverItems"
-      :items-length="serverItems.length"
-      :loading="loading"
-      item-value="id"
-      @update:options="loadItems"
-      fixed-header
-      height="500"
-      class="coloring dashed-border"
-    >
+    <v-data-table-server :headers="headers" :items="serverItems" :items-length="serverItems.length" :loading="loading"
+      item-value="id" @update:options="loadItems" fixed-header height="500" class="coloring dashed-border">
       <template v-slot:top>
         <v-toolbar flat color="transparent">
           <v-toolbar-title>Contacts</v-toolbar-title>
@@ -32,11 +23,8 @@
     </v-dialog>
 
     <v-dialog v-model="editContactDialog" max-width="500px">
-      <ContactFloat
-        :existingContact="selectedContact || undefined"
-        @save="saveEditedContact"
-        @cancel="closeEditContactDialog"
-      />
+      <ContactFloat :existingContact="selectedContact || undefined" @save="saveEditedContact"
+        @cancel="closeEditContactDialog" />
     </v-dialog>
   </div>
   <Login v-else @login-success="onLoginSuccess" />

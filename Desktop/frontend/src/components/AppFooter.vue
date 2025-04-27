@@ -36,5 +36,10 @@
       icon: `mdi-github`,
       href: 'https://github.com/Tiitmouse/iis_project',
     },
+    {
+      title: 'Wails',
+      icon: `mdi-heart-outline`,
+      href: 'https://wails.io/',
+    },
   ]
 </script>
