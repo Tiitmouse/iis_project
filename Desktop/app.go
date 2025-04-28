@@ -4,6 +4,8 @@ import (
 	"Desktop/api"
 	"context"
 	"fmt"
+
+	"github.com/fiorix/wsdl2go/soap"
 )
 
 // App struct
@@ -49,4 +51,19 @@ func (a *App) Validate(file JsFile, data string, m string) Response {
 
 func (a *App) FetchWeather(city string) ([]api.CityWeatherInfo, error) {
 	return api.FetchWeather(city)
+}
+
+func (a *App) SearchContacts(domain string) ([]api.ArrayOfContactRecord, error) {
+	cli := soap.Client{
+		URL:       "http://server",
+		Namespace: api.Namespace,
+	}
+	soapService := api.NewIContactSearchService(&cli)
+	contactReply, err := soapService.SearchContacts(&api.SearchContacts{
+		SearchTerm: &domain,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return []api.ArrayOfContactRecord{*contactReply.SearchContactsResult}, nil
 }

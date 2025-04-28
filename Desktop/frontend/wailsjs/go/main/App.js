@@ -10,6 +10,10 @@ export function Greet(arg1) {
   return window['go']['main']['App']['Greet'](arg1);
 }
 
+export function SearchContacts(arg1) {
+  return window['go']['main']['App']['SearchContacts'](arg1);
+}
+
 export function Validate(arg1, arg2, arg3) {
   return window['go']['main']['App']['Validate'](arg1, arg2, arg3);
 }
