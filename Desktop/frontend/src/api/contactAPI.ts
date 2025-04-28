@@ -26,3 +26,8 @@ export const updateContact = async (id: string, contact: Contact): Promise<Conta
   const response = await axios.put(`/api/contacts/${id}`, contact);
   return response.data;
 };
+
+export const fetchContact = async (id: string): Promise<Contact> => {
+  const response = await axios.get(`/api/contacts/${id}`);
+  return response.data;
+};

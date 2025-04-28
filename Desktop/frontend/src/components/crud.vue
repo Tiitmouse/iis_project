@@ -36,7 +36,7 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import Login from './login.vue';
-import { fetchContacts, deleteContact, createContact, updateContact, type Contact} from '@/api/contactAPI';
+import { fetchContacts, fetchContact, deleteContact, createContact, updateContact, type Contact} from '@/api/contactAPI';
 import { useSnackbar } from '@/components/SnackbarProvider.vue';
 import ContactFloat from './contactFloat.vue';
 
@@ -95,8 +95,14 @@ const logout = () => {
 };
 
 const editItem = async (item: Contact) => {
-  selectedContact.value = item;
-  editContactDialog.value = true;
+  try {
+    const contact = await fetchContact(item.id);
+    selectedContact.value = contact;
+    editContactDialog.value = true;
+  } catch (error: any) {
+    console.error('Failed to fetch contact:', error);
+    snackbar.Error(`Failed to fetch contact for editing: ${error}`);
+  }
 };
 
 const deleteItem = async (item: Contact) => {
