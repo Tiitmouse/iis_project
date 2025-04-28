@@ -1,6 +1,9 @@
 <template>
   <div v-if="isLoggedIn">
-    <h2>Contacts</h2>
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <h2>Contacts</h2>
+      <v-btn color="error" @click="logout">Logout</v-btn>
+    </div>
     <v-data-table-server :headers="headers" :items="serverItems" :items-length="serverItems.length" :loading="loading"
       item-value="id" @update:options="loadItems" fixed-header height="500" class="coloring dashed-border">
       <template v-slot:top>
@@ -33,13 +36,7 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import Login from './login.vue';
-import {
-  fetchContacts,
-  deleteContact,
-  createContact,
-  updateContact,
-  type Contact,
-} from '@/api/contactAPI';
+import { fetchContacts, deleteContact, createContact, updateContact, type Contact} from '@/api/contactAPI';
 import { useSnackbar } from '@/components/SnackbarProvider.vue';
 import ContactFloat from './contactFloat.vue';
 
@@ -48,6 +45,7 @@ const snackbar = useSnackbar();
 const serverItems = ref<Contact[]>([]);
 const loading = ref(true);
 const currentSortBy = ref<any[]>([]);
+const router = useRouter();
 
 const headers = ref([
   { title: 'Type', key: 'type' },
@@ -87,6 +85,12 @@ const loadItems = async ({ sortBy }: { sortBy: any }) => {
   } finally {
     loading.value = false;
   }
+};
+
+const logout = () => {
+  localStorage.removeItem('accessToken');
+  isLoggedIn.value = false;
+  router.push('/');
 };
 
 const editItem = async (item: Contact) => {
