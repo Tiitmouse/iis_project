@@ -1,0 +1,6 @@
+@WebsiteContactsService_HostAddress = http://localhost:5157
+
+GET {{WebsiteContactsService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

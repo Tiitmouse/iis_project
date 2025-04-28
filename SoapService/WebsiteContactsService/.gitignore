@@ -1,0 +1,23 @@
+*.suo
+*.user
+.vs/
+[Bb]in/
+[Oo]bj/
+_UpgradeReport_Files/
+[Pp]ackages/
+
+Thumbs.db
+Desktop.ini
+.DS_Store
+.idea
+appsettings.json
+
+# Additional entries
+*.log
+TestResults/
+*.ncrunch*
+*.vsconfig
+*.tlog
+project.lock.json
+*.ide
+Generated_Code/
