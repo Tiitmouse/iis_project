@@ -2,7 +2,7 @@
   <div v-if="isLoggedIn">
     <div style="display: flex; align-items: center; justify-content: space-between;">
       <h2>Contacts</h2>
-      <v-btn color="error" @click="logout">Logout</v-btn>
+      <v-icon big color="error" @click="logout">mdi-logout</v-icon>
     </div>
     <v-data-table-server :headers="headers" :items="serverItems" :items-length="serverItems.length" :loading="loading"
       item-value="id" @update:options="loadItems" fixed-header height="500" class="coloring dashed-border">
@@ -91,6 +91,7 @@ const logout = () => {
   localStorage.removeItem('accessToken');
   isLoggedIn.value = false;
   router.push('/');
+  snackbar.Success('Logged out');
 };
 
 const editItem = async (item: Contact) => {
