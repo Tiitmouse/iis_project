@@ -1,13 +1,12 @@
 na/Documents/algebra/projekti/iis_project/Front/client_app/src/components/login.vue
 <template>
   <v-sheet class="pa-12" color="transparent">
-    <v-card class="mx-auto px-6 py-8 dashed-border" max-width="344" elevation="0" >
+    <v-card class="mx-auto px-6 py-8 dashed-border" max-width="344" elevation="0">
       <v-form v-model="form" @submit.prevent="onSubmit">
-        <v-text-field v-model="username" :readonly="loading" :rules="[required]" label="Username"
-          clearable></v-text-field>
+        <v-text-field v-model="username" :readonly="loading" :rules="[required]" label="Username"></v-text-field>
 
         <v-text-field type="password" v-model="password" :readonly="loading" :rules="[required]" label="Password"
-          placeholder="Enter your password" clearable></v-text-field>
+          placeholder="Enter your password"></v-text-field>
 
         <br>
 
@@ -67,9 +66,10 @@ function required(v: any) {
   font-weight: bold;
   margin-top: 20px;
 }
+
 .dashed-border {
-    border: 2px dashed #697ea885;
-    background-color: #5373b321 !important;
-    border-radius: 5px;
-  }
+  border: 2px dashed #697ea885;
+  background-color: #5373b321 !important;
+  border-radius: 5px;
+}
 </style>
