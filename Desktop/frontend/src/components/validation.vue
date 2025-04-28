@@ -7,14 +7,9 @@
     </v-radio-group>
   </div>
   <div>
-    <v-file-upload
-      clearable
-      density="compact"
-      title="Click to upload .xml file"
-      variant="compact"
-      accept=".xml,text/xml,application/xml" 
-      @change="handleFileUpload"
-    ></v-file-upload>
+    <v-file-upload clearable density="compact" title="Click to upload .xml file" variant="compact"
+      accept=".xml,text/xml,application/xml" @change="handleFileUpload" :v-model="fileInputModel"
+      :key="fileInputKey"></v-file-upload>
   </div>
   <div>
     <v-btn class="btnValidate" rounded="xs" block @click="validateFile">
@@ -32,6 +27,8 @@ import { useSnackbar } from '@/components/SnackbarProvider.vue';
 const validationType = ref("xsd");
 const uploadedFile = ref<File | null>(null);
 const snackbar = useSnackbar()
+const fileInputModel = ref<File | null>(null)
+const fileInputKey = ref(0);
 
 function handleFileUpload(event: Event) {
   const input = event.target as HTMLInputElement;
@@ -39,6 +36,7 @@ function handleFileUpload(event: Event) {
 
   if (!files || files.length === 0) {
     uploadedFile.value = null;
+    fileInputModel.value = null;
     return;
   }
 
@@ -46,7 +44,10 @@ function handleFileUpload(event: Event) {
 
   if (!file.name.endsWith(".xml")) {
     snackbar.Error("please select an XML file.");
-    input.value = '';
+    input.value = "";
+    uploadedFile.value = null;
+    fileInputModel.value = null;
+    fileInputKey.value++;
     return;
   }
 
@@ -68,13 +69,17 @@ async function validateFile() {
       response = await rngValidate(uploadedFile.value);
     }
     if (!response?.Error) {
-      snackbar.Success("validation success")
+      snackbar.Success("validation success");
     } else {
-      console.log(response.Error)
-      snackbar.Error(`validation failed: ${response.Error}`)
+      console.log(response.Error);
+      snackbar.Error(`validation failed: ${response.Error}`);
     }
   } catch (error: any) {
     console.error("Error during validation:", error);
+  } finally {
+    uploadedFile.value = null;
+    fileInputModel.value = null;
+    fileInputKey.value++; // forced rerender 
   }
 }
 </script>
