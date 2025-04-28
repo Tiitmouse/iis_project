@@ -13,7 +13,7 @@
         ></v-select>
         <v-text-field v-model="contact.value" label="Value" required></v-text-field>
         <v-text-field v-model="contact.name" label="Name"></v-text-field>
-        <v-text-field v-model="sourceInput" label="Sources (comma-separated)"></v-text-field>
+        <v-textarea v-model="sourceInput" label="Sources (comma-separated)"></v-textarea>
       </v-form>
     </v-card-text>
     <v-card-actions>
@@ -69,7 +69,7 @@ export default defineComponent({
         return;
       }
 
-      if (!contact.type || !contact.value || !contact.sources) {
+      if (!contact.type || !contact.value) {
         snackbar.Error('please insert all needed information.');
         return;
       }
