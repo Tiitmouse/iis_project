@@ -1,3 +1,4 @@
+import { api } from "../../wailsjs/go/models";
 import { FetchWeather } from "../../wailsjs/go/main/App";
 
 export interface CityWeatherInfo {
@@ -6,7 +7,7 @@ export interface CityWeatherInfo {
     weatherCondition: string;
 }
 
-export async function fetchWeather(city: string): Promise<CityWeatherInfo[]> {
+export async function fetchWeather(city: string): Promise<api.CityWeatherInfo[]> {
     try {
         const data = await FetchWeather(city);
         return data;

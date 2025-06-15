@@ -12,19 +12,19 @@
         <v-card class="transparent-card">
           <v-row>
             <v-col cols="8">
-              <v-card-title>{{ item.city }}</v-card-title>
-              <v-card-subtitle>Temperature: {{ item.temperature }}°C</v-card-subtitle>
+              <v-card-title>{{ item.City }}</v-card-title>
+              <v-card-subtitle>Temperature: {{ item.Temperature }}°C</v-card-subtitle>
             </v-col>
             <v-col cols="4">
               <v-card-text>
                 <v-icon
-                  v-if="item.weatherCondition.includes('vedro') || item.weatherCondition.includes('sunčano')">mdi-weather-sunny</v-icon>
-                <v-icon v-else-if="item.weatherCondition.includes('oblačno')">mdi-weather-cloudy</v-icon>
+                  v-if="item.WeatherCondition.includes('vedro') || item.WeatherCondition.includes('sunčano')">mdi-weather-sunny</v-icon>
+                <v-icon v-else-if="item.WeatherCondition.includes('oblačno')">mdi-weather-cloudy</v-icon>
                 <v-icon
-                  v-else-if="item.weatherCondition.includes('kiša') || item.weatherCondition.includes('pljusak')">mdi-weather-rainy</v-icon>
-                <v-icon v-else-if="item.weatherCondition.includes('grmljavina')">mdi-weather-lightning</v-icon>
+                  v-else-if="item.WeatherCondition.includes('kiša') || item.WeatherCondition.includes('pljusak')">mdi-weather-rainy</v-icon>
+                <v-icon v-else-if="item.WeatherCondition.includes('grmljavina')">mdi-weather-lightning</v-icon>
                 <v-icon
-                  v-else-if="item.weatherCondition.includes('vjetar') || item.weatherCondition.includes('lahor')">mdi-weather-windy</v-icon>
+                  v-else-if="item.WeatherCondition.includes('vjetar') || item.WeatherCondition.includes('lahor')">mdi-weather-windy</v-icon>
                 <v-icon v-else>mdi-cloud-question</v-icon></v-card-text>
             </v-col>
           </v-row>
@@ -42,12 +42,12 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
 import { fetchWeather } from '@/api/weatherAPI';
-import type { CityWeatherInfo } from '@/api/weatherAPI';
 import { VTextField, VContainer, VRow, VCol, VCard, VCardTitle, VCardSubtitle, VCardText, VIcon } from 'vuetify/components';
 import { useSnackbar } from '@/components/SnackbarProvider.vue';
+import { api } from '../../wailsjs/go/models';
 
 const searchCity = ref('');
-const weatherData = ref<CityWeatherInfo[]>([]);
+const weatherData = ref<api.CityWeatherInfo[]>([]);
 const snackbar = useSnackbar()
 
 const searchWeather = async () => {

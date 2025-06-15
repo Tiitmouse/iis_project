@@ -13,48 +13,24 @@ import (
 const xmlRPCWeatherURL = "http://localhost:8089/RPC2"
 
 type CityWeatherInfo struct {
-	City             string  `json:"city"`
-	Temperature      float64 `json:"temperature"`
-	WeatherCondition string  `json:"weatherCondition"`
+	City             string
+	Temperature      float64
+	WeatherCondition string
 }
 
-type XMLRPCMethodResponse struct {
-	XMLName xml.Name      `xml:"methodResponse"`
-	Params  []XMLRPCParam `xml:"params>param"`
-	Fault   *XMLRPCFault  `xml:"fault,omitempty"`
+type MethodResponse struct {
+	XMLName xml.Name `xml:"methodResponse"`
+	Cities  []struct {
+		Members []Member `xml:"member"`
+	} `xml:"params>param>value>array>data>value>struct"`
 }
 
-type XMLRPCParam struct {
-	Value XMLRPCValue `xml:"value"`
-}
-
-// XMLRPCValue updated to capture direct scalar types as well as structs
-type XMLRPCValue struct {
-	Struct []XMLRPCMember `xml:"struct>member,omitempty"`
-	String string         `xml:"string,omitempty"`
-	Double float64        `xml:"double,omitempty"` // This will capture <value><double>VALUE</double></value>
-	Int    int            `xml:"int,omitempty"`    // For <int>
-	I4     int            `xml:"i4,omitempty"`     // For <i4> (another common int type in XML-RPC)
-}
-
-type XMLRPCMember struct {
-	Name  string         `xml:"name"`
-	Value InnerDataValue `xml:"value"` // Value within a struct member
-}
-
-type InnerDataValue struct {
-	String string  `xml:"string"`
-	Double float64 `xml:"double"`
-	Int    int     `xml:"int"`
-	I4     int     `xml:"i4,omitempty"`
-}
-
-type XMLRPCFault struct {
-	Value XMLRPCFaultValue `xml:"value"`
-}
-
-type XMLRPCFaultValue struct {
-	Struct []XMLRPCMember `xml:"struct>member"`
+type Member struct {
+	Name  string `xml:"name"`
+	Value struct {
+		String string  `xml:"string"`
+		Double float64 `xml:"double"`
+	} `xml:"value"`
 }
 
 func FetchWeather(city string) ([]CityWeatherInfo, error) {
@@ -68,8 +44,6 @@ func FetchWeather(city string) ([]CityWeatherInfo, error) {
 	escapedCity := escapedCityBuffer.String()
 	log.Printf("FetchWeather (client-side): Escaped city name: '%s'", escapedCity)
 
-	// The XML request body sends the city as a simple string parameter.
-	// The server will map this positionally to the correct field in its argument struct.
 	xmlRequestBody := fmt.Sprintf(`<?xml version="1.0"?>
 <methodCall>
   <methodName>WeatherService.GetTemperature</methodName>
@@ -102,49 +76,38 @@ func FetchWeather(city string) ([]CityWeatherInfo, error) {
 		return nil, fmt.Errorf("XML-RPC request failed with HTTP status %d: %s", resp.StatusCode, string(body))
 	}
 
-	var rpcResp XMLRPCMethodResponse
+	var rpcResp MethodResponse
 	if err := xml.Unmarshal(body, &rpcResp); err != nil {
 		log.Printf("FetchWeather (client-side): Error unmarshaling XML-RPC response: %v. Response body: %s", err, string(body))
 		return nil, fmt.Errorf("error unmarshaling XML-RPC response: %w. Response body: %s", err, string(body))
 	}
+	data := transformToCityWeatherInfo(rpcResp)
+	fmt.Printf("rpcResp: %+v\n", data)
+	return data, nil
+}
 
-	if rpcResp.Fault != nil {
-		faultCode := -1
-		faultString := "Unknown XML-RPC fault"
-		for _, member := range rpcResp.Fault.Value.Struct {
-			if member.Name == "faultCode" {
-				if member.Value.Int != 0 { // Prefer <int>
-					faultCode = member.Value.Int
-				} else { // Fallback for <i4> if server uses that for faultCode
-					faultCode = member.Value.I4
-				}
-			} else if member.Name == "faultString" {
-				faultString = member.Value.String
+func transformToCityWeatherInfo(resp MethodResponse) []CityWeatherInfo {
+	// Initialize an empty slice to hold the final, clean data.
+	weatherInfos := make([]CityWeatherInfo, 0, len(resp.Cities))
+
+	// Iterate over each city struct that was unmarshaled from the XML.
+	for _, cityStruct := range resp.Cities {
+		var info CityWeatherInfo
+		// For each city, iterate over its members (City, Temperature, WeatherCondition).
+		for _, member := range cityStruct.Members {
+			// Use a switch statement to assign the correct value to the corresponding field in the info struct.
+			switch member.Name {
+			case "City":
+				info.City = member.Value.String
+			case "Temperature":
+				info.Temperature = member.Value.Double
+			case "WeatherCondition":
+				info.WeatherCondition = member.Value.String
 			}
 		}
-		log.Printf("FetchWeather (client-side): XML-RPC fault received: code %d, message: \"%s\"", faultCode, faultString)
-		return nil, fmt.Errorf("XML-RPC fault: code %d, message: \"%s\"", faultCode, faultString)
+		// Append the fully populated, clean struct to the results slice.
+		weatherInfos = append(weatherInfos, info)
 	}
 
-	var temperature float64
-	foundTemperature := false
-
-	if len(rpcResp.Params) > 0 {
-		temperature = rpcResp.Params[0].Value.Double
-		foundTemperature = true
-		log.Printf("FetchWeather (client-side): Extracted temperature %.6f directly from response param.", temperature)
-	}
-
-	if !foundTemperature {
-		log.Printf("FetchWeather (client-side): Temperature not found in XML-RPC response despite no fault. Response body: %s", string(body))
-		return nil, fmt.Errorf("temperature not found in XML-RPC response. Response body: %s", string(body))
-	}
-
-	weatherInfo := CityWeatherInfo{
-		City:        city,
-		Temperature: temperature,
-	}
-	log.Printf("FetchWeather (client-side): Successfully processed weather for city '%s', temp: %.1f", city, temperature)
-
-	return []CityWeatherInfo{weatherInfo}, nil
+	return weatherInfos
 }

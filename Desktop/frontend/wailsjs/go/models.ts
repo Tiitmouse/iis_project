@@ -78,9 +78,9 @@ export namespace api {
 	}
 	
 	export class CityWeatherInfo {
-	    city: string;
-	    temperature: number;
-	    weatherCondition: string;
+	    City: string;
+	    Temperature: number;
+	    WeatherCondition: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new CityWeatherInfo(source);
@@ -88,9 +88,9 @@ export namespace api {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.city = source["city"];
-	        this.temperature = source["temperature"];
-	        this.weatherCondition = source["weatherCondition"];
+	        this.City = source["City"];
+	        this.Temperature = source["Temperature"];
+	        this.WeatherCondition = source["WeatherCondition"];
 	    }
 	}
 
