@@ -1,61 +1,52 @@
 using System.Xml.Linq;
-using System.Xml.XPath;
 using WebsiteContactsService.Contracts;
+using WebsiteContactsService.Models;
 
 namespace WebsiteContactsService.Services
 {
     public class ContactSearchService : IContactSearchService
     {
         private const string XmlFilePath = "contacts_data.xml";
+        private readonly RapidApiService _rapidApiService;
 
-        public List<ContactRecord> SearchContacts(string searchTerm)
+        public ContactSearchService(RapidApiService rapidApiService)
         {
-            Console.WriteLine($"SOAP SearchContacts called with term: '{searchTerm}'");
-            var results = new List<ContactRecord>();
+            _rapidApiService = rapidApiService;
+        }
 
-            if (!File.Exists(XmlFilePath))
-            {
-                Console.WriteLine($"Error: XML file not found at {XmlFilePath}");
-                return results;
-            }
+        public List<Contact> SearchContacts(string searchTerm)
+        {
+            _rapidApiService.FetchAndGenerateXmlAsync(searchTerm).Wait();
 
-            try
-            {
-                XDocument xDoc = XDocument.Load(XmlFilePath);
-                
-                string xpathQuery = $"//Contact/*[self::Emails/Email or self::PhoneNumbers/Phone][contains(Value, '{searchTerm}')]";
-
-                Console.WriteLine($"Executing XPath: {xpathQuery}");
-                var matchingNodes = xDoc.XPathSelectElements(xpathQuery);
-
-                foreach (var node in matchingNodes) 
+            var xDoc = XDocument.Load(XmlFilePath);
+            var matchingContacts = xDoc.Descendants("Contact")
+                .Where(contact => string.Equals(contact.Element("Domain")?.Value, searchTerm, StringComparison.OrdinalIgnoreCase))
+                .Select(contact => new Contact
                 {
-                    var record = new ContactRecord
-                    {
-                        RecordType = node.Name.LocalName,
-                        Value = node.Element("Value")?.Value,
-                        Sources = node.Element("Sources")?.Elements("Source")
-                                        .Select(src => src.Value)
-                                        .ToList() ?? new List<string>()
-                    };
-                    results.Add(record);
-                }
-                Console.WriteLine($"Found {results.Count} matches.");
-            }
-            catch (XPathException e)
-            {
-                Console.WriteLine($"XPathException occurred: {e.Message}");
-                Console.WriteLine($"Stack Trace: {e.StackTrace}");
-                throw;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"An unexpected error occurred: {e.Message}");
-                Console.WriteLine($"Stack Trace: {e.StackTrace}");
-                throw;
-            }
+                    Domain = contact.Element("Domain")?.Value,
+                    Query = contact.Element("Query")?.Value,
+                    Emails = contact.Element("Emails")?.Elements("Email")
+                        .Select(email => new EmailEntry
+                        {
+                            Value = email.Element("Value")?.Value,
+                            Sources = email.Element("Sources")?.Elements("Source")
+                                .Select(source => source.Value).ToList()
+                        }).ToList(),
+                    PhoneNumbers = contact.Element("PhoneNumbers")?.Elements("Phone")
+                        .Select(phone => new PhoneEntry
+                        {
+                            Value = phone.Element("Value")?.Value,
+                            Sources = phone.Element("Sources")?.Elements("Source")
+                                .Select(source => source.Value).ToList()
+                        }).ToList(),
+                    Facebook = contact.Element("Facebook")?.Value,
+                    Instagram = contact.Element("Instagram")?.Value,
+                    Twitter = contact.Element("Twitter")?.Value,
+                    Youtube = contact.Element("Youtube")?.Value
+                })
+                .ToList();
 
-            return results;
+            return matchingContacts;
         }
     }
 }

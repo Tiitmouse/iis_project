@@ -1,5 +1,6 @@
 using System.Runtime.Serialization;
 using System.ServiceModel;
+using WebsiteContactsService.Models;
 
 namespace WebsiteContactsService.Contracts
 {
@@ -7,7 +8,7 @@ namespace WebsiteContactsService.Contracts
     public interface IContactSearchService
     {
         [OperationContract]
-        List<ContactRecord> SearchContacts(string searchTerm);
+        List<Contact> SearchContacts(string searchTerm);
     }
 
     [DataContract]

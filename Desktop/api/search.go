@@ -7,7 +7,7 @@ import (
 )
 
 // Namespace was auto-generated from WSDL.
-var Namespace = "http://tempuri.org"
+var Namespace = "http://localhost:5157/contact"
 //var Namespace = ""
 
 // NewIContactSearchService creates an initializes a IContactSearchService.
