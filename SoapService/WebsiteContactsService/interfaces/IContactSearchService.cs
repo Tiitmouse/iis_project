@@ -4,7 +4,7 @@ using WebsiteContactsService.Models;
 
 namespace WebsiteContactsService.Contracts
 {
-    [ServiceContract(Namespace = "http://tempuri.org/")]
+    [ServiceContract]
     public interface IContactSearchService
     {
         [OperationContract]

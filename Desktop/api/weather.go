@@ -87,15 +87,11 @@ func FetchWeather(city string) ([]CityWeatherInfo, error) {
 }
 
 func transformToCityWeatherInfo(resp MethodResponse) []CityWeatherInfo {
-	// Initialize an empty slice to hold the final, clean data.
 	weatherInfos := make([]CityWeatherInfo, 0, len(resp.Cities))
 
-	// Iterate over each city struct that was unmarshaled from the XML.
 	for _, cityStruct := range resp.Cities {
 		var info CityWeatherInfo
-		// For each city, iterate over its members (City, Temperature, WeatherCondition).
 		for _, member := range cityStruct.Members {
-			// Use a switch statement to assign the correct value to the corresponding field in the info struct.
 			switch member.Name {
 			case "City":
 				info.City = member.Value.String
@@ -105,7 +101,6 @@ func transformToCityWeatherInfo(resp MethodResponse) []CityWeatherInfo {
 				info.WeatherCondition = member.Value.String
 			}
 		}
-		// Append the fully populated, clean struct to the results slice.
 		weatherInfos = append(weatherInfos, info)
 	}
 

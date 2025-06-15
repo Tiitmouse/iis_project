@@ -8,19 +8,15 @@ import (
 	"github.com/fiorix/wsdl2go/soap"
 )
 
-// App struct
 type App struct {
 	ctx     context.Context
 	service api.IContactSearchService
 }
 
-// NewApp creates a new App application struct
 func NewApp() *App {
 	return &App{}
 }
 
-// startup is called when the app starts. The context is saved
-// so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 	cli := &soap.Client{
@@ -28,12 +24,26 @@ func (a *App) startup(ctx context.Context) {
 		Namespace: api.Namespace,
 	}
 	a.service = api.NewIContactSearchService(cli)
-
 }
 
-// Greet returns a greeting for the given name
 func (a *App) Greet(name string) string {
 	return fmt.Sprintf("Hello %s, It's show time!", name)
+}
+
+// func (a *App) SearchContacts(domain string) (*api.ArrayOfContactRecord, error) {
+// 	fmt.Printf("(Unused) Searching for domain: %s\n", domain)
+// 	contactReply, err := a.service.SearchContacts(&api.SearchContacts{
+// 		SearchTerm: &domain,
+// 	})
+// 	if err != nil {
+// 		fmt.Printf("SOAP call error: %v\n", err)
+// 		return nil, err
+// 	}
+// 	return contactReply.SearchContactsResult, nil
+// }
+
+func (a *App) ManualSearch(domain string) ([]api.SoapContactRecord, error) {
+	return api.ManualRequestSearchContacts(domain)
 }
 
 type JsFile struct {
@@ -58,17 +68,4 @@ func (a *App) Validate(file JsFile, data string, m string) Response {
 
 func (a *App) FetchWeather(city string) ([]api.CityWeatherInfo, error) {
 	return api.FetchWeather(city)
-}
-
-func (a *App) SearchContacts(domain string) ([]api.ArrayOfContactRecord, error) {
-
-	fmt.Printf("searching %s\n", domain)
-	contactReply, err := a.service.SearchContacts(&api.SearchContacts{
-		SearchTerm: &domain,
-	})
-	if err != nil {
-		fmt.Printf("err: %v\n", err)
-		return nil, err
-	}
-	return []api.ArrayOfContactRecord{*contactReply.SearchContactsResult}, nil
 }

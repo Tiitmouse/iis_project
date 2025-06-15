@@ -7,6 +7,6 @@ export function FetchWeather(arg1:string):Promise<Array<api.CityWeatherInfo>>;
 
 export function Greet(arg1:string):Promise<string>;
 
-export function SearchContacts(arg1:string):Promise<Array<api.ArrayOfContactRecord>>;
+export function ManualSearch(arg1:string):Promise<Array<api.SoapContactRecord>>;
 
 export function Validate(arg1:main.JsFile,arg2:string,arg3:string):Promise<main.Response>;

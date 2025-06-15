@@ -27,7 +27,32 @@ namespace WebsiteContactsService.Services
                 {
                     Console.WriteLine($"Contact with domain '{searchTerm}' already exists. Skipping processing.");
                     Console.WriteLine($"Fetched data from XML: {existingContact}");
-                    return new List<Contact>();
+                    var contact = new Contact
+                    {
+                        Domain = existingContact.Element("Domain")?.Value,
+                        Query = existingContact.Element("Query")?.Value,
+                        Emails = existingContact.Element("Emails")?.Elements("Email").Select(e => new EmailEntry
+                        {
+                            Value = e.Element("Value")?.Value,
+                            Sources = e.Element("Sources")?.Elements("Source").Select(s => s.Value).ToList()
+                        }).ToList(),
+                        PhoneNumbers = existingContact.Element("PhoneNumbers")?.Elements("Phone").Select(p => new PhoneEntry
+                        {
+                            Value = p.Element("Value")?.Value,
+                            Sources = p.Element("Sources")?.Elements("Source").Select(s => s.Value).ToList()
+                        }).ToList(),
+                        Facebook = existingContact.Element("Facebook")?.Value,
+                        Instagram = existingContact.Element("Instagram")?.Value,
+                        Tiktok = existingContact.Element("Tiktok")?.Value,
+                        Snapchat = existingContact.Element("Snapchat")?.Value,
+                        Twitter = existingContact.Element("Twitter")?.Value,
+                        Linkedin = existingContact.Element("Linkedin")?.Value,
+                        Github = existingContact.Element("Github")?.Value,
+                        Youtube = existingContact.Element("Youtube")?.Value,
+                        Pinterest = existingContact.Element("Pinterest")?.Value
+                    };
+
+                    return new List<Contact> { contact };
                 }
             }
 
