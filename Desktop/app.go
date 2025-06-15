@@ -10,7 +10,8 @@ import (
 
 // App struct
 type App struct {
-	ctx context.Context
+	ctx     context.Context
+	service api.IContactSearchService
 }
 
 // NewApp creates a new App application struct
@@ -22,6 +23,12 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	cli := &soap.Client{
+		URL:       "http://localhost:5157/contact",
+		Namespace: api.Namespace,
+	}
+	a.service = api.NewIContactSearchService(cli)
+
 }
 
 // Greet returns a greeting for the given name
@@ -54,15 +61,13 @@ func (a *App) FetchWeather(city string) ([]api.CityWeatherInfo, error) {
 }
 
 func (a *App) SearchContacts(domain string) ([]api.ArrayOfContactRecord, error) {
-	cli := soap.Client{
-		URL:       "http://server",
-		Namespace: api.Namespace,
-	}
-	soapService := api.NewIContactSearchService(&cli)
-	contactReply, err := soapService.SearchContacts(&api.SearchContacts{
+
+	fmt.Printf("searching %s\n", domain)
+	contactReply, err := a.service.SearchContacts(&api.SearchContacts{
 		SearchTerm: &domain,
 	})
 	if err != nil {
+		fmt.Printf("err: %v\n", err)
 		return nil, err
 	}
 	return []api.ArrayOfContactRecord{*contactReply.SearchContactsResult}, nil
