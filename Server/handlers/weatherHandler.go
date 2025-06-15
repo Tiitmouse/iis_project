@@ -58,19 +58,30 @@ func FetchAndParseDHMZData() (*Hrvatska, error) {
 	return &dhmzData, nil
 }
 
-func FindTemperatureForCity(data *Hrvatska, cityName string) (float64, error) {
+func FindTemperatureForCity(data *Hrvatska, cityName string) ([]CityWeatherInfo, error) {
 	queryCityLower := strings.ToLower(strings.TrimSpace(cityName))
+	var results []CityWeatherInfo
 	for _, grad := range data.Gradovi {
-		if strings.EqualFold(strings.ToLower(grad.GradIme), queryCityLower) {
+		if strings.Contains(strings.ToLower(grad.GradIme), queryCityLower) {
 			tempStr := strings.TrimSpace(grad.Podatci.Temp)
 			tempFloat, err := strconv.ParseFloat(tempStr, 64)
 			if err != nil {
-				return 0, fmt.Errorf("could not parse temperature '%s' for city '%s': %w", tempStr, grad.GradIme, err)
+				fmt.Printf("Warning: Could not parse temperature '%s' for city '%s': %v\n", tempStr, grad.GradIme, err)
+				continue
 			}
-			return tempFloat, nil
+			results = append(results, CityWeatherInfo{
+				City:             grad.GradIme,
+				Temperature:      tempFloat,
+				WeatherCondition: strings.TrimSpace(grad.Podatci.Vrijeme),
+			})
 		}
 	}
-	return 0, ErrCityNotFound
+
+	if len(results) == 0 {
+		return nil, ErrCityNotFound
+	}
+
+	return results, nil
 }
 
 func GetWeatherByCity(c *gin.Context) {

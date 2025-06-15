@@ -51,78 +51,85 @@ public async Task FetchAndGenerateXmlAsync(string domainToScrape)
     {
         using (var response = await client.SendAsync(request))
         {
-           response.EnsureSuccessStatusCode();
-           var body = await response.Content.ReadAsStringAsync();
-           Console.WriteLine("API Response received. Deserializing...");
-           var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-           var apiResponse = JsonSerializer.Deserialize<ApiResponseWrapper>(body, options);
+            response.EnsureSuccessStatusCode();
+            var body = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"API Response: {body}"); // Log the raw API response
 
-           if (apiResponse?.Data != null && apiResponse.Data.Count > 0)
-           {
-               Console.WriteLine($"Deserialization successful ({apiResponse.Data.Count} records). Generating XML...");
-               GenerateXml(apiResponse.Data);
-               Console.WriteLine($"XML data saved to {XmlFilePath}");
-           }
-           else
-           {
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var apiResponse = JsonSerializer.Deserialize<ApiResponseWrapper>(body, options);
+
+            if (apiResponse?.Data != null && apiResponse.Data.Count > 0)
+            {
+                Console.WriteLine($"Deserialization successful ({apiResponse.Data.Count} records). Generating XML...");
+                GenerateXml(apiResponse.Data);
+                Console.WriteLine($"XML data saved to {XmlFilePath}");
+            }
+            else
+            {
                 Console.WriteLine("Failed to deserialize API response or data list is null/empty.");
                 GenerateXml(new List<Contact>());
                 Console.WriteLine($"Empty XML data file created at {XmlFilePath}");
-           }
+            }
         }
     }
-     catch (HttpRequestException e)
-     {
-         Console.WriteLine($"Error fetching data from RapidAPI ({e.StatusCode}): {e.Message}");
-     }
-     catch (JsonException e)
-     {
-         Console.WriteLine($"Error deserializing API response: {e.Message}");
-     }
-     catch (Exception e) 
-     {
-         Console.WriteLine($"An unexpected error occurred: {e.Message}");
-     }
+    catch (HttpRequestException e)
+    {
+        Console.WriteLine($"Error fetching data from RapidAPI ({e.StatusCode}): {e.Message}");
+    }
+    catch (JsonException e)
+    {
+        Console.WriteLine($"Error deserializing API response: {e.Message}");
+    }
+    catch (Exception e) 
+    {
+        Console.WriteLine($"An unexpected error occurred: {e.Message}");
+    }
 }
 
-        private void GenerateXml(List<Contact> contactDataList)
-        {
-            var xDoc = new XDocument(
-                new XElement("ContactList",
-                    contactDataList.Select(contactData =>
-                        new XElement("Contact",
-                            new XElement("Domain", contactData.Domain),
-                            new XElement("Query", contactData.Query),
-                            new XElement("Emails",
-                                contactData.Emails?.Select(e =>
-                                    new XElement("Email",
-                                        new XElement("Value", e.Value),
-                                        new XElement("Sources",
-                                            e.Sources?.Select(s => new XElement("Source", s)) ?? Enumerable.Empty<XElement>()
-                                        )
-                                    )
-                                ) ?? Enumerable.Empty<XElement>()
-                            ),
-                            new XElement("PhoneNumbers",
-                                contactData.PhoneNumbers?.Select(p =>
-                                    new XElement("Phone",
-                                        new XElement("Value", p.Value),
-                                        new XElement("Sources",
-                                            p.Sources?.Select(s => new XElement("Source", s)) ?? Enumerable.Empty<XElement>()
-                                        )
-                                    )
-                                ) ?? Enumerable.Empty<XElement>()
-                            ),
-                            contactData.Facebook == null ? null : new XElement("Facebook", contactData.Facebook),
-                            contactData.Instagram == null ? null : new XElement("Instagram", contactData.Instagram),
-                            contactData.Twitter == null ? null : new XElement("Twitter", contactData.Twitter),
-                            contactData.Youtube == null ? null : new XElement("Youtube", contactData.Youtube)
-                        )
-                    )
+private void GenerateXml(List<Contact> contactDataList)
+{
+    var xDoc = new XDocument(
+        new XElement("Contacts",
+            contactDataList.Select(contactData =>
+                new XElement("Contact",
+                    new XElement("Domain", contactData.Domain),
+                    new XElement("Query", contactData.Query),
+                    new XElement("Emails",
+                        contactData.Emails?.Select(e =>
+                            new XElement("Email",
+                                new XElement("Value", e.Value),
+                                new XElement("Sources",
+                                    e.Sources?.Select(s => new XElement("Source", s)) ?? Enumerable.Empty<XElement>()
+                                )
+                            )
+                        ) ?? Enumerable.Empty<XElement>()
+                    ),
+                    new XElement("PhoneNumbers",
+                        contactData.PhoneNumbers?.Select(p =>
+                            new XElement("Phone",
+                                new XElement("Value", p.Value),
+                                new XElement("Sources",
+                                    p.Sources?.Select(s => new XElement("Source", s)) ?? Enumerable.Empty<XElement>()
+                                )
+                            )
+                        ) ?? Enumerable.Empty<XElement>()
+                    ),
+                    contactData.Facebook == null ? null : new XElement("Facebook", contactData.Facebook),
+                    contactData.Instagram == null ? null : new XElement("Instagram", contactData.Instagram),
+                    contactData.Tiktok == null ? null : new XElement("Tiktok", contactData.Tiktok),
+                    contactData.Snapchat == null ? null : new XElement("Snapchat", contactData.Snapchat),
+                    contactData.Twitter == null ? null : new XElement("Twitter", contactData.Twitter),
+                    contactData.Linkedin == null ? null : new XElement("Linkedin", contactData.Linkedin),
+                    contactData.Github == null ? null : new XElement("Github", contactData.Github),
+                    contactData.Youtube == null ? null : new XElement("Youtube", contactData.Youtube),
+                    contactData.Pinterest == null ? null : new XElement("Pinterest", contactData.Pinterest)
                 )
-            );
+            )
+        )
+    );
 
-            xDoc.Save(XmlFilePath);
-        }
+    xDoc.Save(XmlFilePath);
+    Console.WriteLine($"XML data saved to {XmlFilePath}");
+}
     }
 }

@@ -16,37 +16,40 @@ namespace WebsiteContactsService.Services
 
         public List<Contact> SearchContacts(string searchTerm)
         {
-            _rapidApiService.FetchAndGenerateXmlAsync(searchTerm).Wait();
+            if (File.Exists(XmlFilePath))
+            {
+                var existingDoc = XDocument.Load(XmlFilePath);
+                var existingContact = existingDoc.Root?
+                    .Elements("Contact")
+                    .FirstOrDefault(c => c.Element("Domain")?.Value == searchTerm);
 
-            var xDoc = XDocument.Load(XmlFilePath);
-            var matchingContacts = xDoc.Descendants("Contact")
-                .Where(contact => string.Equals(contact.Element("Domain")?.Value, searchTerm, StringComparison.OrdinalIgnoreCase))
-                .Select(contact => new Contact
+                if (existingContact != null)
                 {
-                    Domain = contact.Element("Domain")?.Value,
-                    Query = contact.Element("Query")?.Value,
-                    Emails = contact.Element("Emails")?.Elements("Email")
-                        .Select(email => new EmailEntry
-                        {
-                            Value = email.Element("Value")?.Value,
-                            Sources = email.Element("Sources")?.Elements("Source")
-                                .Select(source => source.Value).ToList()
-                        }).ToList(),
-                    PhoneNumbers = contact.Element("PhoneNumbers")?.Elements("Phone")
-                        .Select(phone => new PhoneEntry
-                        {
-                            Value = phone.Element("Value")?.Value,
-                            Sources = phone.Element("Sources")?.Elements("Source")
-                                .Select(source => source.Value).ToList()
-                        }).ToList(),
-                    Facebook = contact.Element("Facebook")?.Value,
-                    Instagram = contact.Element("Instagram")?.Value,
-                    Twitter = contact.Element("Twitter")?.Value,
-                    Youtube = contact.Element("Youtube")?.Value
-                })
-                .ToList();
+                    Console.WriteLine($"Contact with domain '{searchTerm}' already exists. Skipping processing.");
+                    Console.WriteLine($"Fetched data from XML: {existingContact}");
+                    return new List<Contact>();
+                }
+            }
 
-            return matchingContacts;
+            try
+            {
+                Console.WriteLine($"Fetching data for search term: {searchTerm}");
+                _rapidApiService.FetchAndGenerateXmlAsync(searchTerm).Wait();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching data from API: {ex.Message}");
+                return new List<Contact>();
+            }
+
+            return new List<Contact>
+            {
+                new Contact
+                {
+                    Domain = searchTerm,
+                    Query = searchTerm
+                }
+            };
         }
     }
 }
