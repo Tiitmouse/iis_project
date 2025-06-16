@@ -6,23 +6,26 @@ const snackbar = useSnackbar();
 
 // The function now returns a Promise resolving to an array of SoapContactRecord
 export async function searchContactsByDomain(domain: string): Promise<api.SoapContactRecord[]> {
+    console.log("IN SEARCHBYDOMAIN....................")
     if (!domain) {
-        snackbar.Error("Please enter a domain to search.");
+        console.log("Please enter a domain to search.");
         return [];
     }
 
     try {
         // Call the new ManualSearch function
         const result = await ManualSearch(domain);
+        console.log("!! RESULT: ", result);
         if (!result || result.length === 0) {
-            snackbar.Info("No contacts found for this domain.");
+            console.log("No contacts found for this domain.");
             return [];
         } else {
-            snackbar.Success("Contacts found!");
+            console.log("Contacts found!");
             return result;
         }
     } catch (error: any) {
-        snackbar.Error(`Error searching contacts: ${error.message || 'An unknown error occurred'}`);
+        console.log("Error searching contacts:", error.message);
         return [];
     }
 }
+

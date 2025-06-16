@@ -43,7 +43,14 @@ func (a *App) Greet(name string) string {
 // }
 
 func (a *App) ManualSearch(domain string) ([]api.SoapContactRecord, error) {
-	return api.ManualRequestSearchContacts(domain)
+	fmt.Printf("ManualSearch called with domain: %s\n", domain)
+	result, err := api.ManualRequestSearchContacts(domain)
+	if err != nil {
+		fmt.Printf("ManualSearch error: %v\n", err)
+		return nil, err
+	}
+	fmt.Printf("ManualSearch result: %+v\n", result)
+	return result, nil
 }
 
 type JsFile struct {
