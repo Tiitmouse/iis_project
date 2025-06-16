@@ -56,12 +56,14 @@ func ManualRequestSearchContacts(domain string) ([]SoapContactRecord, error) {
 		return nil, fmt.Errorf("error sending SOAP request: %w", err)
 	}
 	defer resp.Body.Close()
+	log.Printf("resp: %+v", resp)
 
 	// 5. Read the response body.
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("error reading SOAP response body: %w", err)
 	}
+	log.Printf("envelope: %+v", string(body))
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("SOAP request failed with status %d: %s", resp.StatusCode, string(body))
@@ -79,7 +81,7 @@ func ManualRequestSearchContacts(domain string) ([]SoapContactRecord, error) {
 		log.Printf("SOAP Client: Error unmarshaling response: %v. Raw Response: %s", err, string(body))
 		return nil, fmt.Errorf("error parsing SOAP response XML: %w", err)
 	}
-
+	log.Printf("envelope: %+v", envelope)
 	// 7. Return the clean list of contact records.
 	return envelope.Body.Content.ContactRecord, nil
 }

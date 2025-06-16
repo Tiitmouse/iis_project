@@ -8,7 +8,7 @@ namespace WebsiteContactsService.Contracts
     public interface IContactSearchService
     {
         [OperationContract]
-        List<Contact> SearchContacts(string searchTerm);
+        Task<List<Contact>> SearchContacts(string searchTerm);
     }
 
     [DataContract]
