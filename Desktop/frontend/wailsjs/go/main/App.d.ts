@@ -11,6 +11,6 @@ export function Greet(arg1:string):Promise<string>;
 
 export function ManualSearch(arg1:string):Promise<Array<api.SoapContactRecord>>;
 
-export function RunJaxbValidation(arg1:string):Promise<string>;
+export function RunJaxbValidation():Promise<string>;
 
 export function Validate(arg1:main.JsFile,arg2:string,arg3:string):Promise<main.Response>;

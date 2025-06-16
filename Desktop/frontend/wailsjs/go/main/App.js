@@ -18,8 +18,8 @@ export function ManualSearch(arg1) {
   return window['go']['main']['App']['ManualSearch'](arg1);
 }
 
-export function RunJaxbValidation(arg1) {
-  return window['go']['main']['App']['RunJaxbValidation'](arg1);
+export function RunJaxbValidation() {
+  return window['go']['main']['App']['RunJaxbValidation']();
 }
 
 export function Validate(arg1, arg2, arg3) {

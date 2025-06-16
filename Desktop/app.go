@@ -4,10 +4,9 @@ import (
 	"Desktop/api"
 	"context"
 	"fmt"
-	"os" // Added for file operations
-
-	// Added for running external commands
-	"path/filepath" // Added for path manipulation
+	"os"
+	"os/exec" // Added for running external commands
+	"path/filepath"
 
 	"github.com/fiorix/wsdl2go/soap"
 )
@@ -105,40 +104,39 @@ func (a *App) CheckSoapFileExists() bool {
 	return true
 }
 
-func (a *App) RunJaxbValidation(xmlFilePath string) (string, error) {
-	fmt.Printf("RunJaxbValidation called with XML file: %s\\n", xmlFilePath)
+func (a *App) RunJaxbValidation() (string, error) {
+	fmt.Println("RunJaxbValidation called")
 
-	// --- Placeholder for Java Application Execution ---
-	// You will need to replace this with the actual command to run your Java application.
-	//
-	// Example considerations:
-	// 1. Path to your Java executable (java).
-	// 2. Path to your JAXB application's JAR file.
-	// 3. Any command-line arguments your Java app needs (e.g., the xmlFilePath).
-	//
-	// Example (conceptual):
-	// javaCmd := "java"
-	// jarPath := "/path/to/your/JaxbThing.jar" // Replace with the actual path to your compiled JAR
-	//
-	// // Ensure xmlFilePath is an absolute path or accessible by the Java app
-	// cmd := exec.Command(javaCmd, "-jar", jarPath, xmlFilePath)
-	//
-	// // Optional: Set working directory if your Java app expects to be run from a specific location
-	// // cmd.Dir = "/path/to/your/JaxbThing/directory"
-	//
-	// output, err := cmd.CombinedOutput() // Gets both stdout and stderr
-	// if err != nil {
-	//   fmt.Printf("Error running JAXB validation: %v\\nOutput: %s\\n", err, string(output))
-	//   return "", fmt.Errorf("failed to run JAXB validation: %w. Output: %s", err, string(output))
-	// }
-	//
-	// fmt.Printf("JAXB validation output: %s\\n", string(output))
-	// return string(output), nil
-	// --- End Placeholder ---
+	jarPath, err := filepath.Abs("../JaxbThing/dist/JaxbThing.jar")
+	if err != nil {
+		fmt.Printf("Error getting absolute path for JaxbThing.jar: %v\\n", err)
+		return "", fmt.Errorf("error resolving JaxbThing.jar path: %w", err)
+	}
+	fmt.Printf("Attempting to run JAR: %s\\n", jarPath)
 
-	// For now, returning a dummy success message.
-	// Replace this with the actual execution logic above.
-	dummyOutput := fmt.Sprintf("Successfully processed (placeholder) %s. Implement Java call.", xmlFilePath)
-	fmt.Println(dummyOutput)
-	return dummyOutput, nil
+	if _, err := os.Stat(jarPath); os.IsNotExist(err) {
+		errMsg := fmt.Sprintf("JaxbThing.jar not found at %s. Please ensure the Java project is built and the JAR is in the 'dist' directory.", jarPath)
+		fmt.Println(errMsg)
+		return "", fmt.Errorf("%s", errMsg)
+	}
+
+	workingDir, err := filepath.Abs("../JaxbThing")
+	if err != nil {
+		fmt.Printf("Error getting absolute path for JaxbThing working directory: %v\\n", err)
+		return "", fmt.Errorf("error resolving JaxbThing working directory: %w", err)
+	}
+	fmt.Printf("Setting working directory for Java app to: %s\\n", workingDir)
+
+	// java -cp JaxbThing.jar jaxbThing.JaxbThing
+	cmd := exec.Command("java", "-jar", jarPath)
+	cmd.Dir = workingDir
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Printf("Error running JAXB validation: %v\\nOutput: %s\\n", err, string(output))
+		return "", fmt.Errorf("failed to run JAXB validation: %w. Output: %s", err, string(output))
+	}
+
+	fmt.Printf("JAXB validation output: %s\\n", string(output))
+	return string(output), nil
 }
