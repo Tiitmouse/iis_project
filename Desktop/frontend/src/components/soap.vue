@@ -23,6 +23,7 @@
           height="400"
           :items-per-page="-1"
           hide-default-footer
+          style=" padding: 10px 10px 0 10px;"
         >
           <template v-slot:item.sources="{ item }">
             <ul v-if="item.sources && item.sources.length" class="source-list">
@@ -134,7 +135,7 @@ h2 {
 }
 .dashed-border {
   border: 2px dashed #697ea885;
-  padding: 10px 10px 0 10px;
+  padding-left: 10px;
   border-radius: 5px;
 }
 h4 {
