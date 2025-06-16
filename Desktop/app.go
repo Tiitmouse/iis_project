@@ -82,7 +82,7 @@ func (a *App) FetchWeather(city string) ([]api.CityWeatherInfo, error) {
 
 func (a *App) CheckSoapFileExists() bool {
 
-	filePath := "../SoapService/WebsiteContactsService/contacts_data.xml" // Adjusted path
+	filePath := "../SoapService/WebsiteContactsService/contacts_data.xml"
 
 	absPath, err := filepath.Abs(filePath)
 	if err != nil {

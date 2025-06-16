@@ -4,14 +4,17 @@
   </div>
   <div class="d-flex align-center my-2">
     <v-icon 
-      v-if="showSoapStatusIcon"
-      :icon="soapFileExists ? 'mdi-file-document-check-outline' : 'mdi-file-document-remove-outline'"
-      :style="{ color: 'var(--button-color)' }"
+      v-if="showSoapStatusIcon || validationAttempted" 
+      :icon="validationAttempted ? validationStatusIcon : (soapFileExists ? 'mdi-file-document-check-outline' : 'mdi-file-document-remove-outline')"
+      :style="{ color: validationAttempted ? validationStatusColor : 'var(--button-color)' }"
       class="mr-2" 
       :size="72"
     ></v-icon>
-    <span v-if="showSoapStatusIcon" class="soap-status-text">
+    <span v-if="showSoapStatusIcon && !validationAttempted" class="soap-status-text">
       SOAP Service File Status: {{ soapFileExists ? 'Available' : 'Unavailable' }}
+    </span>
+    <span v-if="validationAttempted" :style="{ color: validationStatusColor }" class="validation-status-text">
+      JAXB Validation: {{ validationStatusText }}
     </span>
   </div>
   <div>
@@ -23,12 +26,17 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import { useSnackbar } from '@/components/SnackbarProvider.vue'; // Added import
+import { useSnackbar } from '@/components/SnackbarProvider.vue';
 
-const snackbar = useSnackbar(); // Added snackbar instance
+const snackbar = useSnackbar();
 
-// TODO add java  virus
+const validationAttempted = ref(false);
+const validationStatusIcon = ref('mdi-file-document-outline');
+const validationStatusColor = ref('var(--button-color)'); 
+const validationStatusText = ref('');
+
 const validateFile = async () => { 
+  validationAttempted.value = true;
   // @ts-ignore: Accessing 'window.go', which is injected by Wails at runtime.
   const wailsGoApp = window.go?.main?.App;
 
@@ -40,21 +48,38 @@ const validateFile = async () => {
 
       if (result.includes("Unmarshalling successful")) {
         snackbar.Success("JAXB validation successful!");
+        validationStatusIcon.value = 'mdi-file-certificate-outline';
+        validationStatusColor.value = 'green';
+        validationStatusText.value = 'Successful';
       } else if (result.includes("VALIDATION EVENT")) {
-        // Extracting a bit of the message for the snackbar
         const eventMsgMatch = result.match(/MESSAGE: ([^\n]+)/);
         const detail = eventMsgMatch && eventMsgMatch[1] ? eventMsgMatch[1] : "See console for details.";
         snackbar.Warning(`JAXB validation event: ${detail}`);
+        validationStatusIcon.value = 'mdi-file-alert-outline';
+        validationStatusColor.value = 'orange';
+        validationStatusText.value = 'Warning';
       } else if (result.includes("XML processing failed") || result.toLowerCase().includes("error") || result.toLowerCase().includes("exception")) {
         snackbar.Error("JAXB validation failed. See console for details.");
+        validationStatusIcon.value = 'mdi-file-cancel-outline';
+        validationStatusColor.value = 'red';
+        validationStatusText.value = 'Failed';
       } else if (result.trim() === "") {
         snackbar.Error("JAXB validation returned empty output. Check backend logs.");
+        validationStatusIcon.value = 'mdi-file-question-outline';
+        validationStatusColor.value = 'grey';
+        validationStatusText.value = 'Empty Output';
       } else {
         snackbar.Info("JAXB process finished. See console for output.");
+        validationStatusIcon.value = 'mdi-file-eye-outline';
+        validationStatusColor.value = 'blue';
+        validationStatusText.value = 'Info';
       }
     } catch (err: any) {
       console.error("Error calling Wails backend function 'RunJaxbValidation':", err);
       snackbar.Error(`JAXB validation error: ${err.message || err}`);
+      validationStatusIcon.value = 'mdi-file-cancel-outline';
+      validationStatusColor.value = 'red';
+      validationStatusText.value = 'Error';
     }
   } else {
     console.warn(
@@ -62,6 +87,9 @@ const validateFile = async () => {
       "Please ensure the Go function is correctly implemented and bound by Wails."
     );
     snackbar.Error("JAXB validation function not available on backend.");
+    validationStatusIcon.value = 'mdi-file-remove-outline';
+    validationStatusColor.value = 'grey';
+    validationStatusText.value = 'Unavailable';
   }
 };
 
@@ -109,5 +137,10 @@ h2 {
 
 .soap-status-text {
   color: var(--font-color);
+}
+
+.validation-status-text {
+  /* Color is applied dynamically via :style */
+  font-weight: bold;
 }
 </style>

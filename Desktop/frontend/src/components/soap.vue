@@ -6,6 +6,9 @@
         <v-text-field
           v-model="searchDomain"
           label="Search Domain"
+          style="color: white;"
+          outlined
+          dense
           prepend-inner-icon="mdi-magnify"
           class="dashed-border"
           variant="plain"
@@ -58,21 +61,18 @@ const tableRows = computed(() => {
   const rows: { type: string; value: string; sources?: string[] }[] = [];
   const seen = new Set<string>();
   toRaw(contactsData.value).forEach(contact => {
-    // Emails
     (contact.Emails || []).forEach(email => {
       if (email.Value && !seen.has('email|' + email.Value)) {
         seen.add('email|' + email.Value);
         rows.push({ type: 'email', value: email.Value, sources: email.Sources });
       }
     });
-    // Phones
     (contact.PhoneNumbers || []).forEach(phone => {
       if (phone.Value && !seen.has('phone|' + phone.Value)) {
         seen.add('phone|' + phone.Value);
         rows.push({ type: 'phone', value: phone.Value, sources: phone.Sources });
       }
     });
-    // Socials (raw links)
     [
       contact.Facebook,
       contact.Instagram,
@@ -108,7 +108,6 @@ const handleSearch = async () => {
             snackbar.Info("No contacts found for this domain.");
             contactsData.value = [];
         }
-        // Debug logs
         console.log('contactsData', contactsData.value);
         console.log('tableRows', tableRows.value);
     } catch (error: any) {
@@ -139,7 +138,7 @@ h2 {
   border-radius: 5px;
 }
 h4 {
-    color: var(--font-color-secondary); /* Or your preferred color */
+    color: var(--font-color-secondary);
     font-weight: 500;
 }
 .entry-item {
@@ -149,11 +148,11 @@ h4 {
 }
 .source-list {
     list-style-type: disc;
-    padding-left: 25px; /* Indent sources */
+    padding-left: 25px;
     margin-top: 5px;
 }
 .source-link {
-    color: #b3c5f1; /* Lighter color for links */
+    color: #b3c5f1;
     text-decoration: none;
 }
 .source-link:hover {
