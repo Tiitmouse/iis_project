@@ -10,3 +10,7 @@ build/
 *.xml
 *.rng
 *.xsd
+/test1/nbproject/private/
+/test1/dist/
+/JaxbThing/nbproject/private/
+/JaxbThing/dist/
