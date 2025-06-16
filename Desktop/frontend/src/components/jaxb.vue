@@ -37,12 +37,12 @@ const validationStatusText = ref('');
 
 const validateFile = async () => { 
   validationAttempted.value = true;
-  // @ts-ignore: Accessing 'window.go', which is injected by Wails at runtime.
+  // @ts-ignore: accessing 'window.go'injected by 1ails at runtime
   const wailsGoApp = window.go?.main?.App;
 
   if (wailsGoApp && typeof wailsGoApp.RunJaxbValidation === 'function') {
     try {
-      // @ts-ignore: Calling a dynamically checked Wails function.
+      // @ts-ignore:calling a dynamically checked wails function
       const result = await wailsGoApp.RunJaxbValidation();
       console.log('JAXB Process Output:', result);
 
@@ -98,12 +98,12 @@ const soapFileExists = ref(false);
 const showSoapStatusIcon = ref(false); 
 
 onMounted(async () => {
-  // @ts-ignore: Accessing 'window.go', which is injected by Wails at runtime.
+  // @ts-ignore: Accessing 'window.go' injected by wails at runtime
   const wailsGoApp = window.go?.main?.App;
 
   if (wailsGoApp && typeof wailsGoApp.CheckSoapFileExists === 'function') {
     try {
-      // @ts-ignore: Calling a dynamically checked Wails function.
+      // @ts-ignore: calling dynamically checked wails function.
       const exists = await wailsGoApp.CheckSoapFileExists();
       soapFileExists.value = exists;
     } catch (err) {
@@ -140,7 +140,6 @@ h2 {
 }
 
 .validation-status-text {
-  /* Color is applied dynamically via :style */
   font-weight: bold;
 }
 </style>

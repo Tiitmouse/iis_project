@@ -4,7 +4,6 @@ import { useSnackbar } from '@/components/SnackbarProvider.vue';
 
 const snackbar = useSnackbar();
 
-// The function now returns a Promise resolving to an array of SoapContactRecord
 export async function searchContactsByDomain(domain: string): Promise<api.SoapContactRecord[]> {
     console.log("IN SEARCHBYDOMAIN....................")
     if (!domain) {
@@ -13,7 +12,6 @@ export async function searchContactsByDomain(domain: string): Promise<api.SoapCo
     }
 
     try {
-        // Call the new ManualSearch function
         const result = await ManualSearch(domain);
         console.log("!! RESULT: ", result);
         if (!result || result.length === 0) {

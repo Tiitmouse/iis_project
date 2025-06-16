@@ -47,7 +47,6 @@ axiosInstance.interceptors.response.use(
         }
       } else {
         console.error('Interceptor: No refresh token available for refresh attempt.');
-        // Handle logout logic
         localStorage.removeItem('accessToken');
 
       }

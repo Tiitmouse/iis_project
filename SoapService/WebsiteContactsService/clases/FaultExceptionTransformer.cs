@@ -15,9 +15,8 @@ public class FaultExceptionTransformer : IFaultExceptionTransformer
     public Message ProvideFault(Exception exception, MessageVersion messageVersion, Message requestMessage,
         XmlNamespaceManager xmlNamespaceManager)
     {
-        // Create a SOAP fault message with the exception details
         var fault = Message.CreateMessage(messageVersion, "", new FaultReason(exception.Message));
-        fault.Headers.Action = requestMessage.Headers.Action; // Preserve the action header
+        fault.Headers.Action = requestMessage.Headers.Action;
         return fault;
     }
 }

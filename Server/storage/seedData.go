@@ -46,7 +46,7 @@ type XMLPhoneNumber struct {
 }
 
 func parseAndTransformSeedXML() ([]structs.Contact, error) {
-	seedFileName := "data.xml" // Assuming you renamed the file to data.xml
+	seedFileName := "data.xml"
 	xmlBytes, err := seedFS.ReadFile(seedFileName)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read embedded seed file %s: %w", seedFileName, err)

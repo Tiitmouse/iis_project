@@ -25,7 +25,6 @@ func JWTMiddleware() gin.HandlerFunc {
 
 		claims, err := utils.ValidateToken(accessTokenString)
 		if err != nil {
-			// Token is invalid or expired
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired access token"})
 			return
 		}

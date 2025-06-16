@@ -36,7 +36,7 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("Login attempt for user: %s\n", creds.Username) // Basic logging
+	fmt.Printf("Login attempt for user: %s\n", creds.Username)
 
 	const hardcodedUsername = "admin"
 	const hardcodedPassword = "12345678"
