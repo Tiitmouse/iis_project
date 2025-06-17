@@ -8,6 +8,17 @@ This project implements a backend and frontend system based on the RapidAPI "Web
 
 This project is a multi-component system featuring a desktop application, a backend server, a SOAP service, and a JAXB utility. The primary components are orchestrated using Task for streamlined development and execution.
 
+## Program Showcase
+
+<div style="overflow-x: auto; white-space: nowrap; padding: 10px 0; text-align: center;">
+  <img src="Desktop/frontend/src/assets/programimg/startpage.png" alt="Start Page" style="display: inline-block; max-height: 300px; width: auto; margin-right: 10px;"/>
+  <img src="Desktop/frontend/src/assets/programimg/validation.png" alt="Validation Example" style="display: inline-block; max-height: 300px; width: auto; margin-right: 10px;"/>
+  <img src="Desktop/frontend/src/assets/programimg/soap.png" alt="SOAP Service Code" style="display: inline-block; max-height: 300px; width: auto; margin-right: 10px;"/>
+  <img src="Desktop/frontend/src/assets/programimg/weather.png" alt="Weather Service Code" style="display: inline-block; max-height: 300px; width: auto; margin-right: 10px;"/>
+  <img src="Desktop/frontend/src/assets/programimg/jaxb.png" alt="JAXB Usage" style="display: inline-block; max-height: 300px; width: auto; margin-right: 10px;"/>
+  <img src="Desktop/frontend/src/assets/programimg/crud.png" alt="CRUD Operations" style="display: inline-block; max-height: 300px; width: auto; margin-right: 10px;"/>
+</div>
+
 ### Core Structure
 
 Here's a high-level overview of the project's directory structure:
@@ -34,6 +45,10 @@ Here's a high-level overview of the project's directory structure:
 *(For a more detailed, auto-generated structure, you can refer to `project_structure.md`)*
 
 ---
+
+<div style="background-color: #FFF3E0; color: #E65100; border-left: 5px solid #FF9800; padding: 10px; margin-bottom: 15px;">
+  <strong>Disclaimer:</strong> This project is best experienced and run on macOS. While other operating systems might work, macOS is the recommended environment for optimal performance and compatibility.
+</div>
 
 ## Quick Start: Running Everything with `task dev`
 
