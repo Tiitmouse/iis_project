@@ -1,6 +1,7 @@
 using System.Xml.Linq;
 using WebsiteContactsService.Contracts;
 using WebsiteContactsService.Models;
+using System.Xml.XPath; // Added for XPath support
 
 namespace WebsiteContactsService.Services
 {
@@ -61,24 +62,17 @@ namespace WebsiteContactsService.Services
             if (File.Exists(XmlFilePath))
             {
                 var existingDoc = XDocument.Load(XmlFilePath);
-                var dataElement = existingDoc.Root?.Element("data");
+                var dataElement = existingDoc.XPathSelectElement($"/root/data[domain='{searchTerm}']");
 
                 if (dataElement == null)
                 {
-                    Console.WriteLine("No data element found in the XML file.");
-                    return new List<Contact>();
-                }
-
-                var domainElement = dataElement.Element("domain");
-                if (domainElement == null || domainElement.Value != searchTerm)
-                {
-                    Console.WriteLine($"No contact found with the domain '{searchTerm}' in the XML file.");
+                    Console.WriteLine($"No contact found with the domain '{searchTerm}' in the XML file using XPath.");
                     return new List<Contact>();
                 }
 
                 var contact = new Contact
                 {
-                    Domain = domainElement.Value,
+                    Domain = dataElement.Element("domain")?.Value,
                     Query = dataElement.Element("query")?.Value,
                     Emails = dataElement.Elements("emails").Select(e => new EmailEntry
                     {
@@ -94,7 +88,7 @@ namespace WebsiteContactsService.Services
                     Instagram = dataElement.Element("instagram")?.Value
                 };
 
-                Console.WriteLine($"Contact with domain '{searchTerm}' found in file.");
+                Console.WriteLine($"Contact with domain '{searchTerm}' found in file using XPath.");
                 return new List<Contact> { contact };
             }
 

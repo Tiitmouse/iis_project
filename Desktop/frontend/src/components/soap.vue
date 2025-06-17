@@ -100,7 +100,7 @@ const handleSearch = async () => {
             contactsData.value = [];
             return;
         }
-        const result = await searchContactsByDomain(searchDomain.value);
+        const result = await searchContactsByDomain(searchDomain.value.toLowerCase());
         if (result && result.length > 0) {
             snackbar.Success("Contacts found!");
             contactsData.value = result;

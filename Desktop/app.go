@@ -107,7 +107,7 @@ func (a *App) RunJaxbValidation() (string, error) {
 	}
 	fmt.Printf("Setting working directory for Java app to: %s\\n", workingDir)
 
-	// java -cp JaxbThing.jar jaxbThing.JaxbThing
+	// java -jar JaxbThing.jar jaxbThing.JaxbThing
 	cmd := exec.Command("java", "-jar", jarPath)
 	cmd.Dir = workingDir
 
