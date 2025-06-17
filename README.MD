@@ -11,12 +11,12 @@ This project is a multi-component system featuring a desktop application, a back
 ## Program Showcase
 
 <div style="overflow-x: auto; white-space: nowrap; padding: 10px 0; text-align: center;">
-  <img src="Desktop/frontend/src/assets/programimg/startpage.png" alt="Start Page" style="display: inline-block; max-height: 300px; width: auto; margin-right: 10px;"/>
-  <img src="Desktop/frontend/src/assets/programimg/validation.png" alt="Validation Example" style="display: inline-block; max-height: 300px; width: auto; margin-right: 10px;"/>
-  <img src="Desktop/frontend/src/assets/programimg/soap.png" alt="SOAP Service Code" style="display: inline-block; max-height: 300px; width: auto; margin-right: 10px;"/>
-  <img src="Desktop/frontend/src/assets/programimg/weather.png" alt="Weather Service Code" style="display: inline-block; max-height: 300px; width: auto; margin-right: 10px;"/>
-  <img src="Desktop/frontend/src/assets/programimg/jaxb.png" alt="JAXB Usage" style="display: inline-block; max-height: 300px; width: auto; margin-right: 10px;"/>
-  <img src="Desktop/frontend/src/assets/programimg/crud.png" alt="CRUD Operations" style="display: inline-block; max-height: 300px; width: auto; margin-right: 10px;"/>
+  <img src="Desktop/frontend/src/assets/programImg/startpage.png" alt="Start Page" style="display: inline-block; max-height: 300px; width: auto; margin-right: 10px;"/>
+  <img src="Desktop/frontend/src/assets/programImg/validation.png" alt="Validation Example" style="display: inline-block; max-height: 300px; width: auto; margin-right: 10px;"/>
+  <img src="Desktop/frontend/src/assets/programImg/soap.png" alt="SOAP Service Code" style="display: inline-block; max-height: 300px; width: auto; margin-right: 10px;"/>
+  <img src="Desktop/frontend/src/assets/programImg/weather.png" alt="Weather Service Code" style="display: inline-block; max-height: 300px; width: auto; margin-right: 10px;"/>
+  <img src="Desktop/frontend/src/assets/programImg/jaxb.png" alt="JAXB Usage" style="display: inline-block; max-height: 300px; width: auto; margin-right: 10px;"/>
+  <img src="Desktop/frontend/src/assets/programImg/crud.png" alt="CRUD Operations" style="display: inline-block; max-height: 300px; width: auto; margin-right: 10px;"/>
 </div>
 
 ### Core Structure
