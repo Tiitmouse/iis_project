@@ -1,9 +1,11 @@
 package main
 
 import (
+	"Desktop/api"
 	"embed"
 
 	"github.com/wailsapp/wails/v2"
+	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
@@ -27,6 +29,7 @@ func main() {
 		OnStartup:        app.startup,
 		Bind: []interface{}{
 			app,
+			api.NewSecure(),
 		},
 		DragAndDrop: &options.DragAndDrop{
 			EnableFileDrop: true,
@@ -37,6 +40,7 @@ func main() {
 			WindowIsTranslucent:  true,
 			Appearance:           mac.NSAppearanceNameAccessibilityHighContrastVibrantDark,
 		},
+		LogLevel: logger.INFO,
 	})
 
 	if err != nil {

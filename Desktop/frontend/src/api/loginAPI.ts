@@ -1,24 +1,19 @@
-import axios from "@/plugins/axios";
+import {Login, Logout} from "../../wailsjs/go/api/Secure"
 
-interface LoginResponse {
-  access_token: string;
-  refresh_token: string;
-}
-
-export async function login(username: string, password: string): Promise<LoginResponse> {
+export async function login(username: string, password: string) {
   try {
-    const response = await axios.post<LoginResponse>('/api/login', {
-      username: username,
-      password: password
-    });
-
-    if (response.status === 200) {
-      return response.data;
-    } else {
-      throw new Error(`Login failed with status: ${response.status}`);
-    }
+   await Login(username,password)
   } catch (error: any) {
     console.error("Login error:", error);
     throw error;
   }
+}
+
+export async function logout() {
+   try {
+    await Logout()
+   } catch (error: any) {
+     console.error("Logout error: ", error);
+     throw error;
+   }
 }

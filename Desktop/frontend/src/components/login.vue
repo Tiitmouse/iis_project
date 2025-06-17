@@ -23,7 +23,6 @@ na/Documents/algebra/projekti/iis_project/Front/client_app/src/components/login.
 import { ref } from 'vue';
 import { login } from '@/api/loginAPI';
 import { useSnackbar } from '@/components/SnackbarProvider.vue';
-import { errorMessages } from 'vue/compiler-sfc';
 
 const snackbar = useSnackbar();
 
@@ -39,10 +38,7 @@ async function onSubmit() {
   loading.value = true;
 
   try {
-    const { access_token, refresh_token } = await login(username.value, password.value);
-
-    localStorage.setItem('accessToken', access_token);
-    localStorage.setItem('refreshToken', refresh_token);
+     await login(username.value, password.value);
     emit('login-success');
     snackbar.Success("Login successful!");
 

@@ -16,6 +16,26 @@ export namespace api {
 	        this.WeatherCondition = source["WeatherCondition"];
 	    }
 	}
+	export class Contact {
+	    id: string;
+	    type: string;
+	    value: string;
+	    name?: string;
+	    sources?: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new Contact(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.type = source["type"];
+	        this.value = source["value"];
+	        this.name = source["name"];
+	        this.sources = source["sources"];
+	    }
+	}
 	export class SoapPhoneEntry {
 	    XMLName: xml.Name;
 	    Value: string;

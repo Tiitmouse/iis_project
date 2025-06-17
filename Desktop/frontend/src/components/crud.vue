@@ -2,7 +2,7 @@
   <div v-if="isLoggedIn">
     <div style="display: flex; align-items: center; justify-content: space-between;">
       <h2>Contacts</h2>
-      <v-icon big color="error" @click="logout">mdi-logout</v-icon>
+      <v-icon big color="error" @click="handleLogout">mdi-logout</v-icon>
     </div>
     <v-data-table-server :headers="headers" :items="serverItems" :items-length="serverItems.length" :loading="loading"
       item-value="id" @update:options="loadItems" fixed-header height="500" class="coloring dashed-border">
@@ -34,15 +34,18 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import Login from './login.vue';
 import { fetchContacts, fetchContact, deleteContact, createContact, updateContact, type Contact} from '@/api/contactAPI';
 import { useSnackbar } from '@/components/SnackbarProvider.vue';
-import ContactFloat from './contactFloat.vue';
+import ContactFloat, { type Contact as ContactFromContactFloat } from './contactFloat.vue';
+import { logout } from '@/api/loginAPI';
+import type { api } from '../../wailsjs/go/models';
+import { useRouter } from 'vue-router';
 
 const isLoggedIn = ref(false);
 const snackbar = useSnackbar();
-const serverItems = ref<Contact[]>([]);
+const serverItems = ref<api.Contact[]>([]);
 const loading = ref(true);
 const currentSortBy = ref<any[]>([]);
 const router = useRouter();
@@ -87,14 +90,13 @@ const loadItems = async ({ sortBy }: { sortBy: any }) => {
   }
 };
 
-const logout = () => {
-  localStorage.removeItem('accessToken');
+const handleLogout = async () => {
+  await logout();
   isLoggedIn.value = false;
-  router.push('/');
-  snackbar.Success('Logged out');
+  router.push('/'); 
 };
 
-const editItem = async (item: Contact) => {
+const editItem = async (item: api.Contact) => {
   try {
     const contact = await fetchContact(item.id);
     selectedContact.value = contact;
@@ -105,7 +107,7 @@ const editItem = async (item: Contact) => {
   }
 };
 
-const deleteItem = async (item: Contact) => {
+const deleteItem = async (item: api.Contact) => {
   console.log('Deleting item:', item);
   try {
     await deleteContact(item.id);
@@ -130,10 +132,17 @@ const closeEditContactDialog = () => {
   selectedContact.value = null;
 };
 
-const saveNewContact = async (contact: Contact) => {
-  console.log('Saving new contact:', contact);
+const saveNewContact = async (contactDetails: ContactFromContactFloat) => {
+  console.log('Saving new contact:', contactDetails);
   try {
-    await createContact(contact);
+    const contactForAPI: Omit<Contact, 'id'> = {
+      type: contactDetails.type as 'email' | 'phone' | 'social',
+      value: contactDetails.value,
+      name: contactDetails.name,
+      sources: contactDetails.sources,
+    };
+
+    await createContact(contactForAPI);
     snackbar.Success('Contact created successfully');
     closeNewContactDialog();
     await loadItems({ sortBy: currentSortBy.value });
@@ -156,11 +165,22 @@ const saveEditedContact = async (contact: Contact) => {
   }
 };
 
-onMounted(() => {
-  if (localStorage.getItem('accessToken')) {
-    console.log('User already logged in');
+const checkLoginStatus = () => {
+  const token = localStorage.getItem('accessToken');
+  if (token) {
     isLoggedIn.value = true;
+  } else {
+    isLoggedIn.value = false;
   }
+};
+
+onMounted(() => {
+  checkLoginStatus();
+  window.addEventListener('visibilitychange', checkLoginStatus);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('visibilitychange', checkLoginStatus); 
 });
 
 const onLoginSuccess = () => {

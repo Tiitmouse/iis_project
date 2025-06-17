@@ -5,15 +5,12 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"os/exec" // Added for running external commands
+	"os/exec"
 	"path/filepath"
-
-	"github.com/fiorix/wsdl2go/soap"
 )
 
 type App struct {
-	ctx     context.Context
-	service api.IContactSearchService
+	ctx context.Context
 }
 
 func NewApp() *App {
@@ -22,28 +19,11 @@ func NewApp() *App {
 
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
-	cli := &soap.Client{
-		URL:       "http://localhost:5157/contact",
-		Namespace: api.Namespace,
-	}
-	a.service = api.NewIContactSearchService(cli)
 }
 
 func (a *App) Greet(name string) string {
 	return fmt.Sprintf("Hello %s, It's show time!", name)
 }
-
-// func (a *App) SearchContacts(domain string) (*api.ArrayOfContactRecord, error) {
-// 	fmt.Printf("(Unused) Searching for domain: %s\n", domain)
-// 	contactReply, err := a.service.SearchContacts(&api.SearchContacts{
-// 		SearchTerm: &domain,
-// 	})
-// 	if err != nil {
-// 		fmt.Printf("SOAP call error: %v\n", err)
-// 		return nil, err
-// 	}
-// 	return contactReply.SearchContactsResult, nil
-// }
 
 func (a *App) ManualSearch(domain string) ([]api.SoapContactRecord, error) {
 	fmt.Printf("ManualSearch called with domain: %s\n", domain)
