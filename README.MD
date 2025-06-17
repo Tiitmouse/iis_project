@@ -46,9 +46,7 @@ Here's a high-level overview of the project's directory structure:
 
 ---
 
-<div style="background-color: #FFF3E0; color: #E65100; border-left: 5px solid #FF9800; padding: 10px; margin-bottom: 15px;">
-  <strong>Disclaimer:</strong> This project is best experienced and run on macOS. While other operating systems might work, macOS is the recommended environment for optimal performance and compatibility.
-</div>
+![Disclaimer](Desktop/frontend/src/assets/disclaimer.png)
 
 ## Quick Start: Running Everything with `task dev`
 
