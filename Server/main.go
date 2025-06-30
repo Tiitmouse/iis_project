@@ -65,7 +65,8 @@ func main() {
 	api := r.Group("/api")
 	{
 		api.POST("/login", handlers.LoginHandler)
-		api.POST("/refresh", handlers.RefreshTokenHandler)
+		api.POST("/logout", handlers.JWTMiddleware(), handlers.LogoutHandler)
+		api.POST("/refresh", handlers.JWTMiddleware(), handlers.RefreshTokenHandler)
 		contacts := api.Group("/contacts")
 		contacts.Use(handlers.JWTMiddleware())
 		{

@@ -104,3 +104,8 @@ func RefreshTokenHandler(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, response)
 }
+
+func LogoutHandler(c *gin.Context) {
+	RefreshToken = ""
+	c.AbortWithStatus(http.StatusNoContent)
+}

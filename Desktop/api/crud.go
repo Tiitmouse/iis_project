@@ -142,8 +142,18 @@ func (s *Secure) Logout() error {
 		log.Println("Secure instance (s) is nil in Logout")
 		return fmt.Errorf("internal server error: secure context not initialized")
 	}
+
+	resp, err := s.doRequest(http.MethodPost, "http://localhost:8088/api/logout", nil)
+	if err != nil {
+		return fmt.Errorf("logout request failed: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusNoContent {
+		log.Printf("Logout failed, ststus code %v", resp.StatusCode)
+	}
+	log.Printf("Logout success, ststus code %v", resp.StatusCode)
+
 	s.accessToken = ""
-	//s.refreshToken = ""
 	return nil
 }
 
