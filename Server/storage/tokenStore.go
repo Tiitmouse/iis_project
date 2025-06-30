@@ -12,17 +12,65 @@ type TokenStore struct {
 	filePath string
 }
 
-func NewTokenStore(filePath string) (*TokenStore, error) {
-	store := &TokenStore{
-		Tokens:   make(map[string]string),
-		filePath: filePath,
-	}
-	if err := store.load(); err != nil {
-		if !os.IsNotExist(err) {
-			return nil, err
+var (
+	tokenStoreInstance *TokenStore
+	tokenStoreOnce     sync.Once
+)
+
+// GetTokenStore returns the singleton instance of TokenStore
+func GetTokenStore() *TokenStore {
+	tokenStoreOnce.Do(func() {
+		store := &TokenStore{
+			Tokens:   make(map[string]string),
+			filePath: "tokens.json", // default file path
 		}
+		if err := store.load(); err != nil {
+			if !os.IsNotExist(err) {
+				// Log error but continue with empty store
+				// In production, you might want to handle this differently
+			}
+		}
+		tokenStoreInstance = store
+	})
+	return tokenStoreInstance
+}
+
+// NewTokenStore is deprecated, use GetTokenStore() instead
+// Kept for backward compatibility
+func NewTokenStore(filePath string) (*TokenStore, error) {
+	tokenStoreOnce.Do(func() {
+		store := &TokenStore{
+			Tokens:   make(map[string]string),
+			filePath: filePath,
+		}
+		if err := store.load(); err != nil {
+			if !os.IsNotExist(err) {
+				// Log error but continue with empty store
+			}
+		}
+		tokenStoreInstance = store
+	})
+	return tokenStoreInstance, nil
+}
+
+// SetTokenStoreFilePath sets a custom file path for the token store
+// This should be called before the first call to GetTokenStore() to take effect
+func SetTokenStoreFilePath(filePath string) {
+	if tokenStoreInstance == nil {
+		// If instance doesn't exist yet, we can set the path
+		tokenStoreOnce.Do(func() {
+			store := &TokenStore{
+				Tokens:   make(map[string]string),
+				filePath: filePath,
+			}
+			if err := store.load(); err != nil {
+				if !os.IsNotExist(err) {
+					// Log error but continue with empty store
+				}
+			}
+			tokenStoreInstance = store
+		})
 	}
-	return store, nil
 }
 
 func (s *TokenStore) AddToken(userID, token string) error {

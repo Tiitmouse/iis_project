@@ -20,6 +20,9 @@ import (
 func main() {
 	utils.LoadEnv()
 
+	// Initialize token store with custom file path (optional)
+	storage.SetTokenStoreFilePath("tokens.json")
+
 	contactStore := storage.NewContactStore()
 	handlers.SetContactStore(contactStore)
 

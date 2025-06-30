@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"iis_server/storage"
 	"iis_server/utils"
 	"net/http"
 
@@ -15,16 +16,13 @@ type LoginCredentials struct {
 
 type LoginResponse struct {
 	AccessToken string `json:"access_token"`
-	//RefreshToken string `json:"refresh_token"`
-	Message string `json:"message"`
+	Message     string `json:"message"`
 }
 
 type RefreshResponse struct {
 	AccessToken string `json:"access_token"`
 	Message     string `json:"message"`
 }
-
-var RefreshToken string
 
 func LoginHandler(c *gin.Context) {
 	var creds LoginCredentials
@@ -59,20 +57,47 @@ func LoginHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate refresh token"})
 		return
 	}
-	RefreshToken = refreshToken
+
+	// Store refresh token in singleton TokenStore
+	tokenStore := storage.GetTokenStore()
+	err = tokenStore.AddToken(hardcodedUserID, refreshToken)
+	if err != nil {
+		fmt.Printf("Error storing refresh token: %v\n", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to store refresh token"})
+		return
+	}
+
 	fmt.Printf("Login successful for user: %s\n", creds.Username)
 
 	response := LoginResponse{
 		AccessToken: accessToken,
-		//RefreshToken: refreshToken,
-		Message: "Login successful",
+		Message:     "Login successful",
 	}
 	c.JSON(http.StatusOK, response)
 }
 
 func RefreshTokenHandler(c *gin.Context) {
+	// Get user ID from JWT middleware context
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User ID not found in token"})
+		return
+	}
 
-	refreshTokenString := RefreshToken
+	userIDStr, ok := userID.(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID format"})
+		return
+	}
+
+	// Get refresh token from singleton TokenStore
+	tokenStore := storage.GetTokenStore()
+	refreshTokenString := tokenStore.GetToken(userIDStr)
+	if refreshTokenString == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "No refresh token found"})
+		return
+	}
+
 	claims, err := utils.ValidateToken(refreshTokenString)
 	if err != nil {
 		fmt.Printf("Refresh token validation failed: %v\n", err)
@@ -96,7 +121,13 @@ func RefreshTokenHandler(c *gin.Context) {
 		return
 	}
 
-	RefreshToken = newRefreshToken
+	// Update refresh token in singleton TokenStore
+	err = tokenStore.AddToken(claims.UserID, newRefreshToken)
+	if err != nil {
+		fmt.Printf("Error storing new refresh token: %v\n", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to store new refresh token"})
+		return
+	}
 
 	response := RefreshResponse{
 		AccessToken: newAccessToken,
@@ -106,6 +137,26 @@ func RefreshTokenHandler(c *gin.Context) {
 }
 
 func LogoutHandler(c *gin.Context) {
-	RefreshToken = ""
+	// Get user ID from JWT middleware context
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User ID not found in token"})
+		return
+	}
+
+	userIDStr, ok := userID.(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID format"})
+		return
+	}
+
+	// Remove refresh token from singleton TokenStore
+	tokenStore := storage.GetTokenStore()
+	err := tokenStore.RemoveToken(userIDStr)
+	if err != nil {
+		fmt.Printf("Error removing refresh token during logout: %v\n", err)
+		// Continue with logout even if token removal fails
+	}
+
 	c.AbortWithStatus(http.StatusNoContent)
 }
