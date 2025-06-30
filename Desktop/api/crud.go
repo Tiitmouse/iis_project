@@ -18,14 +18,14 @@ type Contact struct {
 }
 
 type loginResponse struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
+	AccessToken string `json:"access_token"`
+	//RefreshToken string `json:"refresh_token"`
 }
 
 type Secure struct {
-	accessToken  string
-	refreshToken string
-	httpClient   *http.Client
+	accessToken string
+	//refreshToken string
+	httpClient *http.Client
 }
 
 func NewSecure() *Secure {
@@ -115,18 +115,18 @@ func (s *Secure) Login(username, password string) error {
 	}
 
 	s.accessToken = loginResp.AccessToken
-	s.refreshToken = loginResp.RefreshToken
+	//s.refreshToken = loginResp.RefreshToken
 	log.Printf("Login: Completed for instance %p. New s.accessToken: '%s'", s, s.accessToken)
 
 	go func() {
-		ticker := time.NewTicker(1 * time.Minute)
+		ticker := time.NewTicker(10 * time.Second)
 		defer ticker.Stop()
 
 		for {
 			select {
 			case <-ticker.C:
-				if s.refreshToken == "" {
-					log.Println("No refresh token, stopping refresh attempts.")
+				if s.accessToken == "" {
+					log.Println("No access token, stopping refresh attempts.")
 					return
 				}
 				log.Println("Attempting token refresh...")
@@ -143,7 +143,7 @@ func (s *Secure) Logout() error {
 		return fmt.Errorf("internal server error: secure context not initialized")
 	}
 	s.accessToken = ""
-	s.refreshToken = ""
+	//s.refreshToken = ""
 	return nil
 }
 
@@ -154,21 +154,7 @@ func (s *Secure) refresh() {
 	}
 	refreshURL := "http://localhost:8088/api/refresh"
 
-	if s.refreshToken == "" {
-		log.Println("No refresh token available, cannot refresh session.")
-		return
-	}
-
-	payload := map[string]string{
-		"refresh_token": s.refreshToken,
-	}
-	jsonData, err := json.Marshal(payload)
-	if err != nil {
-		log.Printf("Failed to marshal refresh token payload: %v", err)
-		return
-	}
-
-	resp, err := s.doRequest(http.MethodPost, refreshURL, jsonData)
+	resp, err := s.doRequest(http.MethodPost, refreshURL, nil)
 	if err != nil {
 		log.Printf("Refresh token request failed: %v", err)
 		return
@@ -178,7 +164,6 @@ func (s *Secure) refresh() {
 	if resp.StatusCode != http.StatusOK {
 		log.Printf("Refresh token failed with status: %s", resp.Status)
 		s.accessToken = ""
-		s.refreshToken = ""
 		return
 	}
 
@@ -189,9 +174,7 @@ func (s *Secure) refresh() {
 	}
 
 	s.accessToken = refreshResp.AccessToken
-	if refreshResp.RefreshToken != "" {
-		s.refreshToken = refreshResp.RefreshToken
-	}
+
 	log.Println("Token refreshed successfully.")
 }
 

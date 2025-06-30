@@ -14,19 +14,17 @@ type LoginCredentials struct {
 }
 
 type LoginResponse struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-	Message      string `json:"message"`
-}
-
-type RefreshRequest struct {
-	RefreshToken string `json:"refresh_token" binding:"required"`
+	AccessToken string `json:"access_token"`
+	//RefreshToken string `json:"refresh_token"`
+	Message string `json:"message"`
 }
 
 type RefreshResponse struct {
 	AccessToken string `json:"access_token"`
 	Message     string `json:"message"`
 }
+
+var RefreshToken string
 
 func LoginHandler(c *gin.Context) {
 	var creds LoginCredentials
@@ -61,31 +59,20 @@ func LoginHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate refresh token"})
 		return
 	}
-
+	RefreshToken = refreshToken
 	fmt.Printf("Login successful for user: %s\n", creds.Username)
 
 	response := LoginResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-		Message:      "Login successful",
+		AccessToken: accessToken,
+		//RefreshToken: refreshToken,
+		Message: "Login successful",
 	}
 	c.JSON(http.StatusOK, response)
 }
 
 func RefreshTokenHandler(c *gin.Context) {
-	var req RefreshRequest
 
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: " + err.Error()})
-		return
-	}
-
-	refreshTokenString := req.RefreshToken
-	if refreshTokenString == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing refresh_token in request body"})
-		return
-	}
-
+	refreshTokenString := RefreshToken
 	claims, err := utils.ValidateToken(refreshTokenString)
 	if err != nil {
 		fmt.Printf("Refresh token validation failed: %v\n", err)
@@ -101,6 +88,15 @@ func RefreshTokenHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate new access token"})
 		return
 	}
+
+	newRefreshToken, err := utils.GenerateRefreshToken(claims.UserID)
+	if err != nil {
+		fmt.Printf("Error generating new refresh token during refresh: %v\n", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate new refresh token"})
+		return
+	}
+
+	RefreshToken = newRefreshToken
 
 	response := RefreshResponse{
 		AccessToken: newAccessToken,
