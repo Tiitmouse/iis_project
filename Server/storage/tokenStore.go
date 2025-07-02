@@ -2,6 +2,7 @@ package storage
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"sync"
 )
@@ -17,17 +18,15 @@ var (
 	tokenStoreOnce     sync.Once
 )
 
-// GetTokenStore returns the singleton instance of TokenStore
 func GetTokenStore() *TokenStore {
 	tokenStoreOnce.Do(func() {
 		store := &TokenStore{
 			Tokens:   make(map[string]string),
-			filePath: "tokens.json", // default file path
+			filePath: "tokens.json", // default
 		}
 		if err := store.load(); err != nil {
 			if !os.IsNotExist(err) {
-				// Log error but continue with empty store
-				// In production, you might want to handle this differently
+				fmt.Println("Error loading token store:", err)
 			}
 		}
 		tokenStoreInstance = store
@@ -35,8 +34,7 @@ func GetTokenStore() *TokenStore {
 	return tokenStoreInstance
 }
 
-// NewTokenStore is deprecated, use GetTokenStore() instead
-// Kept for backward compatibility
+// kept for backward compatibility
 func NewTokenStore(filePath string) (*TokenStore, error) {
 	tokenStoreOnce.Do(func() {
 		store := &TokenStore{
@@ -45,7 +43,7 @@ func NewTokenStore(filePath string) (*TokenStore, error) {
 		}
 		if err := store.load(); err != nil {
 			if !os.IsNotExist(err) {
-				// Log error but continue with empty store
+				fmt.Println("Error loading token store:", err)
 			}
 		}
 		tokenStoreInstance = store
@@ -53,11 +51,8 @@ func NewTokenStore(filePath string) (*TokenStore, error) {
 	return tokenStoreInstance, nil
 }
 
-// SetTokenStoreFilePath sets a custom file path for the token store
-// This should be called before the first call to GetTokenStore() to take effect
 func SetTokenStoreFilePath(filePath string) {
 	if tokenStoreInstance == nil {
-		// If instance doesn't exist yet, we can set the path
 		tokenStoreOnce.Do(func() {
 			store := &TokenStore{
 				Tokens:   make(map[string]string),
@@ -65,7 +60,7 @@ func SetTokenStoreFilePath(filePath string) {
 			}
 			if err := store.load(); err != nil {
 				if !os.IsNotExist(err) {
-					// Log error but continue with empty store
+					fmt.Println("Error loading token store:", err)
 				}
 			}
 			tokenStoreInstance = store

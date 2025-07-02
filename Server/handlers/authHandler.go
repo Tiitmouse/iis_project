@@ -58,7 +58,6 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
-	// Store refresh token in singleton TokenStore
 	tokenStore := storage.GetTokenStore()
 	err = tokenStore.AddToken(hardcodedUserID, refreshToken)
 	if err != nil {
@@ -77,7 +76,6 @@ func LoginHandler(c *gin.Context) {
 }
 
 func RefreshTokenHandler(c *gin.Context) {
-	// Get user ID from JWT middleware context
 	userID, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User ID not found in token"})
@@ -90,7 +88,6 @@ func RefreshTokenHandler(c *gin.Context) {
 		return
 	}
 
-	// Get refresh token from singleton TokenStore
 	tokenStore := storage.GetTokenStore()
 	refreshTokenString := tokenStore.GetToken(userIDStr)
 	if refreshTokenString == "" {
@@ -121,7 +118,6 @@ func RefreshTokenHandler(c *gin.Context) {
 		return
 	}
 
-	// Update refresh token in singleton TokenStore
 	err = tokenStore.AddToken(claims.UserID, newRefreshToken)
 	if err != nil {
 		fmt.Printf("Error storing new refresh token: %v\n", err)
@@ -137,7 +133,6 @@ func RefreshTokenHandler(c *gin.Context) {
 }
 
 func LogoutHandler(c *gin.Context) {
-	// Get user ID from JWT middleware context
 	userID, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User ID not found in token"})
@@ -150,12 +145,10 @@ func LogoutHandler(c *gin.Context) {
 		return
 	}
 
-	// Remove refresh token from singleton TokenStore
 	tokenStore := storage.GetTokenStore()
 	err := tokenStore.RemoveToken(userIDStr)
 	if err != nil {
 		fmt.Printf("Error removing refresh token during logout: %v\n", err)
-		// Continue with logout even if token removal fails
 	}
 
 	c.AbortWithStatus(http.StatusNoContent)
